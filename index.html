@@ -1,0 +1,2449 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0d13">
+<meta name="color-scheme" content="dark">
+<title>РАЗВИЛКА · Отдел тяжких преступлений</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='13' r='8' fill='none' stroke='%23e0a33c' stroke-width='3'/%3E%3Cpath d='M19 19l9 9' stroke='%23e0a33c' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+--void:#070a10;--desk:#0d1219;--surf:#141b25;--surf2:#1b2431;--raise:#232e3d;
+--edge:#2c3a4c;--edge2:#3d4f66;
+--ink:#ece4d3;--ink2:#a8b0bd;--ink3:#6d7787;
+--amber:#e0a33c;--amber2:#f5c869;--rust:#c2622c;
+--blood:#d8434f;--blood2:#ff7079;
+--violet:#a678e8;--cyan:#3fb6d8;--acid:#7fc44a;--teal:#2f8f7a;
+--paper:#e8dcc0;
+--ok:#5fbf7a;--warn:#e0a33c;--bad:#d8434f;--info:#3fb6d8;
+--serif:Georgia,'Times New Roman',serif;
+--mono:ui-monospace,'SF Mono',Consolas,monospace;
+--sans:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scrollbar-color:#3d4f66 #0d1219;scrollbar-width:thin}
+body{background:#070a10;color:var(--ink);font:15px/1.55 var(--sans);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:#0d1219;border-left:1px solid #1b2431}
+::-webkit-scrollbar-thumb{background:#2c3a4c;border:3px solid #0d1219;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--amber)}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;touch-action:manipulation}
+input,textarea,select{font:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+svg{display:block}
+#atmos{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#atmos .glow{position:absolute;border-radius:50%;filter:blur(80px)}
+#atmos .g1{width:70vmax;height:50vmax;left:-25vmax;top:-20vmax;background:radial-gradient(circle,rgba(28,44,72,.85),transparent 66%);animation:dr1 52s ease-in-out infinite alternate}
+#atmos .g2{width:50vmax;height:44vmax;right:-20vmax;top:22vh;background:radial-gradient(circle,rgba(224,163,60,.10),transparent 66%);animation:dr2 64s ease-in-out infinite alternate}
+#atmos .g3{width:56vmax;height:40vmax;left:8vmax;bottom:-22vmax;background:radial-gradient(circle,rgba(166,120,232,.09),transparent 66%);animation:dr3 58s ease-in-out infinite alternate}
+#atmos .lamp{position:absolute;left:50%;top:-40vh;width:150vmax;height:150vmax;transform-origin:0 40vh;background:conic-gradient(from 0deg,transparent 0deg,rgba(224,163,60,.045) 7deg,transparent 15deg);animation:sweep 44s linear infinite}
+#atmos .grain{position:absolute;inset:-50px;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+#atmos .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 34%,transparent 42%,rgba(3,5,9,.82) 100%)}
+#atmos .dust{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--amber);opacity:.2;animation:float linear infinite}
+@keyframes dr1{to{transform:translate(10vmax,8vmax) scale(1.14)}}
+@keyframes dr2{to{transform:translate(-9vmax,-7vmax) scale(1.18)}}
+@keyframes dr3{to{transform:translate(8vmax,-10vmax) scale(.9)}}
+@keyframes sweep{to{transform:rotate(360deg)}}
+@keyframes float{0%{transform:translate(0,0);opacity:0}14%{opacity:.28}86%{opacity:.2}100%{transform:translate(5vw,-52vh);opacity:0}}
+#app{position:relative;z-index:1;max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 14px calc(20px + env(safe-area-inset-bottom))}
+@media(min-width:600px){#app{border-left:1px solid rgba(44,58,76,.6);border-right:1px solid rgba(44,58,76,.6);box-shadow:0 0 100px rgba(0,0,0,.6);background:rgba(10,14,20,.4)}}
+.view{display:flex;flex-direction:column;gap:13px;flex:1;padding-top:13px}
+.view>*{animation:up .5s cubic-bezier(.2,.75,.25,1) both}
+.view>*:nth-child(2){animation-delay:.05s}.view>*:nth-child(3){animation-delay:.1s}
+.view>*:nth-child(4){animation-delay:.15s}.view>*:nth-child(5){animation-delay:.2s}
+.view>*:nth-child(6){animation-delay:.25s}.view>*:nth-child(n+7){animation-delay:.3s}
+@keyframes up{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.65)}70%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.32}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shrink{from{width:100%}to{width:0}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes stamp{0%{opacity:0;transform:rotate(-14deg) scale(2.4)}60%{opacity:1;transform:rotate(-7deg) scale(.94)}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.calm *{animation:none!important;transition:none!important}
+.calm .spin{animation:spin .9s linear infinite!important}
+.calm .live{animation:blink 1.5s infinite!important}
+
+.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:7px;padding:calc(9px + env(safe-area-inset-top)) 0 9px;background:linear-gradient(180deg,rgba(7,10,16,.97),rgba(7,10,16,.86));backdrop-filter:blur(12px);border-bottom:1px solid rgba(44,58,76,.7);margin:0 -14px;padding-left:14px;padding-right:14px}
+.mark{display:flex;align-items:center;gap:8px;margin-right:auto;min-width:0}
+.mark .nm{font:700 13px/1 var(--serif);letter-spacing:.26em;white-space:nowrap}
+.mark .nm i{font-style:normal;color:var(--amber)}
+.ib{position:relative;flex:none;display:flex;align-items:center;justify-content:center;gap:6px;height:38px;min-width:38px;padding:0 10px;border-radius:10px;border:1px solid var(--edge);background:var(--surf);color:var(--ink2);font-size:12px;font-weight:700;transition:transform .12s,color .2s,border-color .2s}
+.ib:hover{color:var(--ink);border-color:var(--edge2)}
+.ib:active{transform:scale(.92)}
+.ib.hot{border-color:rgba(224,163,60,.55);color:var(--amber)}
+.ib .pip{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--blood);color:#fff;font:800 10px/17px var(--mono);text-align:center}
+.ib .pip.amb{background:var(--amber);color:#2a1c05}
+
+.clock{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:13px;border:1px solid var(--edge);background:linear-gradient(120deg,var(--surf2),var(--surf))}
+.clock.low{border-color:rgba(216,67,79,.6);background:linear-gradient(120deg,rgba(216,67,79,.14),var(--surf))}
+.clock .digits{font:800 26px/1 var(--mono);color:var(--amber);letter-spacing:.02em}
+.clock.low .digits{color:var(--blood2);animation:blink 1.1s infinite}
+.clock .lbl{font:9px/1.3 var(--mono);letter-spacing:.18em;color:var(--ink3);text-transform:uppercase}
+.clock .track{flex:1;height:6px;border-radius:3px;background:var(--void);overflow:hidden;border:1px solid var(--edge)}
+.clock .track i{display:block;height:100%;background:linear-gradient(90deg,var(--rust),var(--amber));transition:width .6s}
+.clock.low .track i{background:linear-gradient(90deg,#8f1f28,var(--blood))}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;padding:13px 18px;border-radius:13px;font-size:15px;font-weight:700;border:1px solid transparent;transition:transform .12s,filter .2s;user-select:none}
+.btn:active{transform:scale(.975)}
+.btn:disabled{opacity:.38;pointer-events:none}
+.btn-a{background:linear-gradient(135deg,var(--amber),var(--rust));color:#241703;box-shadow:0 8px 26px rgba(224,163,60,.2)}
+.btn-a:hover{filter:brightness(1.07)}
+.btn-g{background:var(--surf);border-color:var(--edge);color:var(--ink)}
+.btn-g:hover{border-color:var(--edge2)}
+.btn-b{background:rgba(216,67,79,.1);border-color:rgba(216,67,79,.5);color:var(--blood2)}
+.btn-c{background:rgba(63,182,216,.1);border-color:rgba(63,182,216,.5);color:var(--cyan)}
+.btn-v{background:rgba(166,120,232,.1);border-color:rgba(166,120,232,.5);color:var(--violet)}
+.btn-s{min-height:42px;font-size:13px;padding:9px 13px;width:auto}
+.link{color:var(--ink2);font-size:13px;text-decoration:underline;text-underline-offset:3px;align-self:center;padding:7px}
+.link:hover{color:var(--amber)}
+
+.card{background:linear-gradient(175deg,var(--surf2),var(--surf));border:1px solid var(--edge);border-radius:16px;padding:15px}
+.card.tight{padding:12px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font:10px/1.5 var(--mono);letter-spacing:.13em;text-transform:uppercase;border:1px solid var(--edge);background:var(--surf);color:var(--ink2);white-space:nowrap}
+.tag.a{border-color:rgba(224,163,60,.5);color:var(--amber);background:rgba(224,163,60,.1)}
+.tag.b{border-color:rgba(216,67,79,.5);color:var(--blood2);background:rgba(216,67,79,.1)}
+.tag.c{border-color:rgba(63,182,216,.5);color:var(--cyan);background:rgba(63,182,216,.1)}
+.tag.v{border-color:rgba(166,120,232,.5);color:var(--violet);background:rgba(166,120,232,.1)}
+.tag.g{border-color:rgba(95,191,122,.5);color:var(--ok);background:rgba(95,191,122,.1)}
+.seal{display:inline-block;font:10px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--amber);border:1.5px solid rgba(224,163,60,.6);border-radius:5px;padding:5px 9px;transform:rotate(-2deg)}
+.seal.red{color:var(--blood2);border-color:rgba(216,67,79,.6)}
+.mut{color:var(--ink2);font-size:13px}
+.dim{color:var(--ink3);font-size:12px}
+.mono{font-family:var(--mono)}
+.ser{font-family:var(--serif)}
+.ctr{text-align:center}
+.row{display:flex;gap:10px;align-items:center}
+.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:9px}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:700;line-height:1.2}
+.spin{width:42px;height:42px;border-radius:50%;border:3px solid var(--edge);border-top-color:var(--amber);animation:spin .9s linear infinite;margin:0 auto}
+.dots:after{content:'…';animation:blink 1.4s infinite}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label{font:10px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink3)}
+.fld input,.fld textarea{padding:12px 13px;border-radius:12px;border:1px solid var(--edge);background:var(--desk);font-size:15px;width:100%}
+.fld input:focus,.fld textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(224,163,60,.13)}
+.fld textarea{resize:vertical;min-height:90px;line-height:1.5}
+
+.hero{display:flex;flex-direction:column;align-items:center;gap:11px;padding:26px 0 4px;text-align:center}
+.hero h1{font-size:38px;letter-spacing:.28em;text-indent:.28em;background:linear-gradient(115deg,var(--ink) 26%,var(--amber2) 50%,var(--ink) 74%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{font:10px/1.5 var(--mono);letter-spacing:.3em;color:var(--ink3);text-transform:uppercase}
+.hero p{color:var(--ink2);font-size:13.5px;max-width:370px}
+.bigcard{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:17px;border-radius:16px;border:1px solid var(--edge);background:linear-gradient(145deg,var(--raise),var(--surf) 72%);transition:transform .15s,border-color .2s,box-shadow .25s}
+.bigcard:hover{border-color:var(--bc,var(--amber));box-shadow:0 12px 34px rgba(0,0,0,.4);transform:translateY(-2px)}
+.bigcard:active{transform:scale(.98)}
+.bigcard .ic{flex:none;width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--bc,var(--amber));background:var(--bcbg,rgba(224,163,60,.12));border:1px solid var(--bc45,rgba(224,163,60,.45))}
+.bigcard h3{font-size:17px;margin-bottom:3px}
+.bigcard p{font-size:12.5px;color:var(--ink2);line-height:1.45}
+
+.scene{border-radius:16px;overflow:hidden;border:1px solid var(--edge);position:relative;box-shadow:0 16px 44px rgba(0,0,0,.5)}
+.scene svg{width:100%;height:auto}
+.scene .cap{position:absolute;inset:auto 0 0 0;padding:30px 14px 11px;background:linear-gradient(180deg,transparent,rgba(5,8,12,.93));display:flex;align-items:flex-end;justify-content:space-between;gap:9px}
+.scene .cap h3{font-size:18px}
+.scene .cap .s{font-size:11.5px;color:var(--ink2)}
+
+.pick{display:flex;align-items:center;gap:11px;padding:9px;border-radius:13px;border:1px solid var(--edge);background:var(--surf);text-align:left;width:100%;transition:border-color .2s,transform .12s}
+.pick:active{transform:scale(.985)}
+.pick.on{border-color:var(--amber);background:linear-gradient(115deg,rgba(224,163,60,.11),var(--surf) 58%)}
+.pick .th{flex:none;width:74px;height:46px;border-radius:9px;overflow:hidden;border:1px solid var(--edge)}
+.pick .th svg{width:100%;height:100%}
+.pick .t{font-weight:700;font-size:13.5px}
+.pick .d{font-size:11px;color:var(--ink2);line-height:1.35}
+.pick .rd{flex:none;margin-left:auto;width:19px;height:19px;border-radius:50%;border:2px solid var(--edge2);display:flex;align-items:center;justify-content:center;color:#241703}
+.pick.on .rd{background:var(--amber);border-color:var(--amber)}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:9px 5px;border-radius:11px;border:1px solid var(--edge);background:var(--surf);font-size:12.5px;font-weight:700;color:var(--ink2);transition:all .18s}
+.seg button.on{border-color:var(--amber);color:var(--amber);background:rgba(224,163,60,.1)}
+.seg button small{display:block;font-weight:500;font-size:9.5px;color:var(--ink3);margin-top:2px}
+
+.tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{height:0}
+.tabs button{flex:none;padding:8px 12px;border-radius:10px;border:1px solid var(--edge);background:var(--surf);font-size:12px;font-weight:700;color:var(--ink2);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tabs button.on{border-color:var(--amber);color:var(--amber);background:rgba(224,163,60,.11)}
+.tabs button .n{font:9px/1 var(--mono);padding:2px 4px;border-radius:4px;background:var(--raise);color:var(--ink2)}
+.tabs button.on .n{background:rgba(224,163,60,.2);color:var(--amber2)}
+
+/* КАРТОЧКИ УЛИК — просторные, читаемые */
+.ev{position:relative;width:100%;text-align:left;border-radius:14px;border:1px solid var(--edge);border-left:4px solid var(--ec,var(--amber));background:linear-gradient(170deg,var(--surf2),var(--desk) 82%);padding:14px 15px 13px;overflow:hidden}
+.ev+.ev{margin-top:10px}
+.ev .head{display:flex;gap:11px;align-items:flex-start;margin-bottom:9px}
+.ev .ico{flex:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ec,var(--amber));background:var(--ecbg,rgba(224,163,60,.11));border:1px solid var(--ec45,rgba(224,163,60,.42))}
+.ev .ttl{font:700 16px/1.3 var(--serif);color:var(--ink)}
+.ev .src{font:9px/1.4 var(--mono);letter-spacing:.14em;color:var(--ink3);text-transform:uppercase;margin-top:3px}
+.ev .body{font-size:14px;line-height:1.62;color:#cfd4dc}
+.ev .lab{margin-top:11px;padding:11px 12px;border-radius:10px;background:rgba(63,182,216,.07);border-left:3px solid var(--cyan);font-size:13.5px;line-height:1.6;color:#c8dce4}
+.ev .lab b{color:var(--cyan);font-size:11px;font-family:var(--mono);letter-spacing:.14em;display:block;margin-bottom:4px}
+.ev .foot{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;align-items:center}
+.ev.tap{cursor:pointer;transition:border-color .18s,transform .12s}
+.ev.tap:active{transform:scale(.99)}
+.ev.sel{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber),0 10px 28px rgba(224,163,60,.16)}
+.ev.q{border-left-color:var(--violet)}
+
+.pers{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left;padding:13px;border-radius:15px;border:1px solid var(--edge);background:linear-gradient(160deg,var(--surf2),var(--surf));transition:border-color .2s,transform .12s}
+.pers:active{transform:scale(.99)}
+.pers+.pers{margin-top:10px}
+.pers.s2{border-color:rgba(216,67,79,.55);background:linear-gradient(160deg,rgba(216,67,79,.1),var(--surf))}
+.pers.s1{border-color:rgba(224,163,60,.45)}
+.pers.clear{border-color:rgba(95,191,122,.45);background:linear-gradient(160deg,rgba(95,191,122,.07),var(--surf))}
+.pers .nm{font:700 16px/1.25 var(--serif)}
+.pers .rl{font-size:11.5px;color:var(--amber);margin-top:2px}
+.pers .bio{font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:6px}
+.pers .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+
+.act{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:13px 14px;border-radius:13px;border:1px solid var(--edge);background:var(--surf);transition:border-color .18s,transform .12s}
+.act+.act{margin-top:9px}
+.act:hover{border-color:var(--edge2)}
+.act:active{transform:scale(.99)}
+.act:disabled{opacity:.42;pointer-events:none}
+.act .ai{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ac,var(--amber));background:var(--acbg,rgba(224,163,60,.1));border:1px solid var(--ac45,rgba(224,163,60,.4))}
+.act .at{font-weight:700;font-size:14px}
+.act .ad{font-size:12px;color:var(--ink2);line-height:1.45;margin-top:3px}
+.act .cost{flex:none;font:700 12px/1 var(--mono);color:var(--amber);padding:6px 8px;border-radius:8px;border:1px solid rgba(224,163,60,.35);background:rgba(224,163,60,.08);white-space:nowrap}
+.act.done{border-color:rgba(95,191,122,.35)}
+.act.done .cost{color:var(--ok);border-color:rgba(95,191,122,.35);background:rgba(95,191,122,.08)}
+
+.contra{border-radius:14px;border:1px solid rgba(216,67,79,.5);background:linear-gradient(150deg,rgba(216,67,79,.12),var(--surf) 76%);padding:14px}
+.contra+.contra{margin-top:11px}
+.contra .ch{display:flex;gap:9px;align-items:center;margin-bottom:9px}
+.contra .ch b{font:700 13px/1.3 var(--sans);color:var(--blood2)}
+.contra .side{padding:9px 11px;border-radius:9px;background:rgba(7,10,16,.55);font-size:13px;line-height:1.55;color:#d3d8e0}
+.contra .side+.side{margin-top:7px}
+.contra .side em{font-style:normal;font:9px/1.4 var(--mono);letter-spacing:.14em;color:var(--ink3);display:block;text-transform:uppercase;margin-bottom:3px}
+.contra .vs{text-align:center;font:700 10px/1 var(--mono);letter-spacing:.2em;color:var(--blood);margin:7px 0}
+.contra.fixed{border-color:rgba(95,191,122,.45);background:linear-gradient(150deg,rgba(95,191,122,.09),var(--surf) 76%)}
+.contra.fixed .ch b{color:var(--ok)}
+
+.tl{position:relative;padding-left:26px}
+.tl:before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--edge),var(--edge2),var(--edge))}
+.tli{position:relative;padding:9px 0}
+.tli:before{content:'';position:absolute;left:-23px;top:15px;width:11px;height:11px;border-radius:50%;background:var(--surf);border:2px solid var(--edge2)}
+.tli.known:before{background:var(--amber);border-color:var(--amber);box-shadow:0 0 9px rgba(224,163,60,.6)}
+.tli.crime:before{background:var(--blood);border-color:var(--blood);box-shadow:0 0 10px rgba(216,67,79,.7)}
+.tli .t{font:700 12px/1 var(--mono);color:var(--amber);letter-spacing:.08em}
+.tli.crime .t{color:var(--blood2)}
+.tli .x{font-size:13.5px;line-height:1.5;margin-top:4px;color:#cfd4dc}
+.tli.unknown .x{color:var(--ink3);font-style:italic}
+
+.note{padding:12px 13px;border-radius:12px;background:rgba(232,220,192,.06);border:1px dashed rgba(232,220,192,.28);font-size:13.5px;line-height:1.6;color:#ddd6c4}
+.jrn{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--edge);font-size:13px;line-height:1.5}
+.jrn .jt{flex:none;font:9px/1.6 var(--mono);color:var(--ink3);width:42px}
+.jrn .jx{color:#c9cfd8}
+.jrn.hi .jx{color:var(--amber2)}
+.jrn.bad .jx{color:var(--blood2)}
+.jrn.good .jx{color:var(--ok)}
+
+.sheet{position:fixed;inset:0;z-index:60;display:none}
+.sheet.on{display:block}
+.sheet .scrim{position:absolute;inset:0;background:rgba(3,5,9,.8);backdrop-filter:blur(6px);animation:fade .22s both}
+.sheet .box{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:560px;max-height:88vh;background:linear-gradient(180deg,var(--raise),var(--desk) 22%);border:1px solid var(--edge2);border-bottom:none;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:sheetup .34s cubic-bezier(.2,.8,.25,1) both;box-shadow:0 -22px 70px rgba(0,0,0,.7)}
+@keyframes sheetup{from{transform:translate(-50%,70px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+.sheet .sh{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid var(--edge)}
+.sheet .sh h3{font-size:17px;flex:1}
+.sheet .sb{overflow-y:auto;padding:15px 16px calc(22px + env(safe-area-inset-bottom))}
+
+.full{position:fixed;inset:0;z-index:55;background:var(--void);display:none;flex-direction:column}
+.full.on{display:flex}
+.full .fh{flex:none;max-width:560px;margin:0 auto;width:100%;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;border-bottom:1px solid var(--edge);background:linear-gradient(180deg,var(--desk),rgba(13,18,25,.9))}
+.full .fb{flex:1;overflow-y:auto;max-width:560px;margin:0 auto;width:100%;padding:14px 14px calc(26px + env(safe-area-inset-bottom))}
+
+#toasts{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:90;width:min(500px,calc(100vw - 22px));display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-radius:13px;background:rgba(16,22,31,.98);border:1px solid var(--edge2);border-left:4px solid var(--tc,var(--cyan));box-shadow:0 16px 44px rgba(0,0,0,.55);font-size:13.5px;line-height:1.45;animation:tin .34s cubic-bezier(.2,.8,.25,1.1) both}
+.toast.out{animation:tout .3s ease forwards}
+.toast .td{flex:none;width:8px;height:8px;border-radius:50%;background:var(--tc,var(--cyan));margin-top:6px}
+@keyframes tin{from{opacity:0;transform:translateY(-18px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0;transform:translateY(-10px) scale(.95)}}
+#fx{position:fixed;inset:0;z-index:80;pointer-events:none}
+.verdict{border-radius:18px;padding:20px 17px;text-align:center;border:1px solid var(--vc45);background:linear-gradient(160deg,var(--vcbg),var(--surf) 78%);position:relative;overflow:hidden}
+.verdict .k{font:10px/1 var(--mono);letter-spacing:.32em;color:var(--vc)}
+.verdict h2{font-size:27px;margin:8px 0 6px;color:var(--vc)}
+.verdict p{font-size:13.5px;color:var(--ink2);line-height:1.55}
+.verdict .stmp{position:absolute;top:14px;right:12px;animation:stamp .6s .3s both}
+.epi{padding:12px 13px;border-radius:12px;background:var(--surf);border:1px solid var(--edge);font-size:13.5px;line-height:1.6}
+.epi+.epi{margin-top:9px}
+.epi b{color:var(--ink);font-family:var(--serif);font-size:14.5px}
+.epi .r{font-size:11px;color:var(--ink3);display:block;margin-bottom:5px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:380px){.hero h1{font-size:30px}.clock .digits{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="atmos" aria-hidden="true">
+<div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+<div class="lamp"></div><div class="grain"></div><div class="vig"></div>
+</div>
+
+<div id="app">
+<div class="view">
+<div class="hero">
+<svg width="76" height="76" viewBox="0 0 32 32"><circle cx="13" cy="13" r="8" fill="none" stroke="#e0a33c" stroke-width="2.6"/><path d="M19 19l9 9" stroke="#e0a33c" stroke-width="2.6" stroke-linecap="round"/><path d="M10 13h6M13 10v6" stroke="#d8434f" stroke-width="1.8" stroke-linecap="round"/></svg>
+<h1>РАЗВИЛКА</h1>
+<div class="sub">Отдел тяжких преступлений</div>
+</div>
+<div class="card ctr"><p class="mut">Открываем дело<span class="dots"></span></p></div>
+</div>
+</div>
+
+<div id="sheet" class="sheet" role="dialog" aria-modal="true"></div>
+<div id="full" class="full"></div>
+<div id="toasts" aria-live="polite"></div>
+<canvas id="fx"></canvas>
+<noscript><div style="position:fixed;inset:0;background:#070a10;color:#ece4d3;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;z-index:99">Нужен включённый JavaScript.</div></noscript>
+
+<script>
+window.__ok=false;
+window.__fail=function(m,l){
+  var a=document.getElementById('app');
+  if(!a||window.__ok)return;
+  a.innerHTML='<div style="padding:36px 16px;color:#ece4d3;font-family:system-ui,sans-serif">'
+  +'<div style="font-family:Georgia,serif;font-size:25px;letter-spacing:.2em;text-align:center;margin-bottom:15px">РАЗВИЛКА</div>'
+  +'<div style="border:1px solid #3d4f66;border-radius:15px;padding:16px;background:#141b25">'
+  +'<p style="color:#ff7079;font-weight:700;margin-bottom:8px">Дело не открылось</p>'
+  +'<p style="color:#a8b0bd;font-size:13px;line-height:1.55">'+(l?'Строка '+l+'. ':'')+String(m).replace(/[<>]/g,'')+'</p>'
+  +'<button onclick="location.reload()" style="margin-top:14px;width:100%;padding:13px;border-radius:12px;border:none;background:#e0a33c;color:#241703;font-weight:700;font-size:15px">Перезагрузить</button></div></div>';
+};
+window.addEventListener('error',function(e){if(!window.__ok)window.__fail(e.message||'Ошибка',e.lineno);});
+setTimeout(function(){if(!window.__ok)window.__fail('Скрипт не запустился. Проверьте целостность файла.',0);},4000);
+</script>
+
+<script>
+(function(){
+'use strict';
+
+/* ═══════════ УТИЛИТЫ ═══════════ */
+function $(s){return document.querySelector(s);}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+var EM={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return EM[c];});}
+function ri(n){return Math.floor(Math.random()*n);}
+function pk(a){return a[ri(a.length)];}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=ri(i+1),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function hash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h;}
+function rngOf(seed){var s=(seed>>>0)||1;return function(){s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+function R(rng){return{
+  f:rng,
+  n:function(n){return Math.floor(rng()*n);},
+  p:function(a){return a[Math.floor(rng()*a.length)];},
+  s:function(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(rng()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;},
+  not:function(a,x){var f=a.filter(function(y){return y!==x;});return f.length?f[Math.floor(rng()*f.length)]:a[0];},
+  chance:function(p){return rng()<p;}
+};}
+function rgb(h){h=h.replace('#','');return[parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+function alpha(h,a){var c=rgb(h);return'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+function darker(h,p){var c=rgb(h).map(function(v){return Math.round(v*(1-p));});return'rgb('+c[0]+','+c[1]+','+c[2]+')';}
+function cv(h){return'--ec:'+h+';--ecbg:'+alpha(h,.11)+';--ec45:'+alpha(h,.42);}
+function av(h){return'--ac:'+h+';--acbg:'+alpha(h,.1)+';--ac45:'+alpha(h,.4);}
+function bv(h){return'--vc:'+h+';--vcbg:'+alpha(h,.13)+';--vc45:'+alpha(h,.45);}
+var UID=0;
+var ABC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function mkSeed(){var s='';for(var i=0;i<5;i++)s+=ABC[ri(ABC.length)];return s;}
+function clSeed(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);}
+var LS={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}},
+  del:function(k){try{localStorage.removeItem(k);}catch(e){}}
+};
+function vib(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
+var calm=false;try{calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+var TM={};
+function later(k,fn,ms){clearTimeout(TM[k]);TM[k]=setTimeout(function(){delete TM[k];fn();},ms);}
+function stop(k){clearTimeout(TM[k]);delete TM[k];}
+function stopAll(){for(var k in TM)stop(k);}
+function plural(n,f){var m=n%10,h=n%100;if(m===1&&h!==11)return f[0];if(m>=2&&m<=4&&(h<12||h>14))return f[1];return f[2];}
+function hrs(n){return n+' '+plural(n,['час','часа','часов']);}
+
+/* ═══════════ УВЕДОМЛЕНИЯ ═══════════ */
+var TC={info:'#3fb6d8',ok:'#5fbf7a',warn:'#e0a33c',bad:'#d8434f',find:'#a678e8'};
+function toast(msg,kind){
+  var root=$('#toasts');if(!root)return;
+  while(root.children.length>=4)root.removeChild(root.firstChild);
+  var el=document.createElement('div');
+  el.className='toast';
+  el.style.setProperty('--tc',TC[kind]||TC.info);
+  var d=document.createElement('span');d.className='td';
+  var t=document.createElement('span');t.textContent=msg;
+  el.appendChild(d);el.appendChild(t);root.appendChild(el);
+  setTimeout(function(){el.className='toast out';setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},320);},4200);
+}
+
+/* ═══════════ ЗВУК ═══════════ */
+var AU={ctx:null,mst:null,on:LS.get('rzv_snd','1')==='1'};
+function auInit(){
+  if(AU.ctx)return;
+  try{
+    var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+    AU.ctx=new C();
+    AU.mst=AU.ctx.createGain();AU.mst.gain.value=AU.on?0.85:0;
+    var cp=AU.ctx.createDynamicsCompressor();
+    AU.mst.connect(cp);cp.connect(AU.ctx.destination);
+    var amb=AU.ctx.createGain();amb.gain.value=.055;amb.connect(AU.mst);
+    var o1=AU.ctx.createOscillator();o1.type='sine';o1.frequency.value=48;
+    var g1=AU.ctx.createGain();g1.gain.value=.55;o1.connect(g1);g1.connect(amb);o1.start();
+    var o2=AU.ctx.createOscillator();o2.type='triangle';o2.frequency.value=72;
+    var g2=AU.ctx.createGain();g2.gain.value=.2;o2.connect(g2);g2.connect(amb);o2.start();
+    var len=Math.floor(AU.ctx.sampleRate*3);
+    var buf=AU.ctx.createBuffer(1,len,AU.ctx.sampleRate),dd=buf.getChannelData(0);
+    for(var i=0;i<len;i++)dd[i]=Math.random()*2-1;
+    var nz=AU.ctx.createBufferSource();nz.buffer=buf;nz.loop=true;
+    var bp=AU.ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1100;bp.Q.value=.5;
+    var ng=AU.ctx.createGain();ng.gain.value=.16;
+    nz.connect(bp);bp.connect(ng);ng.connect(amb);nz.start();
+    var lf=AU.ctx.createOscillator();lf.frequency.value=.05;
+    var lg=AU.ctx.createGain();lg.gain.value=420;
+    lf.connect(lg);lg.connect(bp.frequency);lf.start();
+    if(!AU.on)AU.ctx.suspend();
+  }catch(e){}
+}
+function tn(f,dur,type,vol,dly,slide){
+  if(!AU.ctx||!AU.on)return;
+  try{
+    var t0=AU.ctx.currentTime+(dly||0);
+    var o=AU.ctx.createOscillator(),g=AU.ctx.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(f,t0);
+    if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(24,slide),t0+dur);
+    g.gain.setValueAtTime(.0001,t0);
+    g.gain.exponentialRampToValueAtTime(vol||.1,t0+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    o.connect(g);g.connect(AU.mst);o.start(t0);o.stop(t0+dur+.06);
+  }catch(e){}
+}
+function ns(dur,ft,fq,vol,dly){
+  if(!AU.ctx||!AU.on)return;
+  try{
+    var t0=AU.ctx.currentTime+(dly||0);
+    var len=Math.max(1,Math.floor(AU.ctx.sampleRate*dur));
+    var b=AU.ctx.createBuffer(1,len,AU.ctx.sampleRate),d=b.getChannelData(0);
+    for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+    var s=AU.ctx.createBufferSource();s.buffer=b;
+    var f=AU.ctx.createBiquadFilter();f.type=ft;f.frequency.value=fq;
+    var g=AU.ctx.createGain();
+    g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    s.connect(f);f.connect(g);g.connect(AU.mst);s.start(t0);
+  }catch(e){}
+}
+function arp(list,dur,type,vol,step){list.forEach(function(f,i){tn(f,dur,type,vol,i*step);});}
+function sfx(n){
+  if(!AU.ctx||!AU.on)return;
+  if(n==='tap')tn(660,.05,'square',.05);
+  else if(n==='pick'){tn(500,.06,'triangle',.1);tn(760,.06,'triangle',.07,.04);}
+  else if(n==='page'){ns(.2,'highpass',2400,.15);tn(240,.1,'sine',.06,.03);}
+  else if(n==='find'){ns(.13,'highpass',3200,.2);arp([523,659,880],.16,'triangle',.1,.07);}
+  else if(n==='lab'){tn(880,.1,'sine',.07);tn(1320,.14,'sine',.06,.09);ns(.2,'bandpass',2200,.08,.02);}
+  else if(n==='talk'){tn(300,.07,'triangle',.08);tn(360,.06,'triangle',.06,.06);}
+  else if(n==='contra'){arp([311,466,311],.24,'sawtooth',.09,.14);vib([25,40,25]);}
+  else if(n==='crack'){ns(.3,'lowpass',700,.28);arp([196,262,392],.3,'triangle',.11,.1);}
+  else if(n==='clock')tn(1400,.03,'square',.05);
+  else if(n==='warn'){tn(300,.13,'square',.1);tn(300,.13,'square',.09,.18);}
+  else if(n==='stamp'){ns(.09,'lowpass',560,.36);tn(130,.12,'sine',.3,.01);}
+  else if(n==='win')arp([523,659,784,1047,1319],.24,'triangle',.12,.1);
+  else if(n==='half')arp([440,554,659],.26,'triangle',.1,.12);
+  else if(n==='lose')arp([330,262,208,155],.34,'sawtooth',.08,.18);
+  else if(n==='open'){ns(.34,'highpass',1400,.24);tn(280,.3,'sine',.08,.05,110);}
+  else if(n==='err')tn(150,.24,'sawtooth',.12);
+}
+function setSnd(on){
+  AU.on=on;LS.set('rzv_snd',on?'1':'0');auInit();
+  if(AU.ctx){try{AU.mst.gain.value=on?0.85:0;if(on)AU.ctx.resume();else AU.ctx.suspend();}catch(e){}}
+  var b=$('#snd');if(b)b.innerHTML=ic(on?'snd':'mute',18);
+  if(on)sfx('tap');
+}
+
+/* ═══════════ ЧАСТИЦЫ ═══════════ */
+var FX={ps:[],raf:0,c:null,x:null,dpr:1};
+function fxInit(){
+  FX.c=$('#fx');if(!FX.c||!FX.c.getContext)return;
+  FX.x=FX.c.getContext('2d');
+  var rs=function(){FX.dpr=Math.min(window.devicePixelRatio||1,2);FX.c.width=Math.floor(innerWidth*FX.dpr);FX.c.height=Math.floor(innerHeight*FX.dpr);};
+  rs();addEventListener('resize',rs);
+}
+function fxRun(){
+  if(FX.raf||!FX.x)return;
+  var step=function(){
+    var x=FX.x;x.clearRect(0,0,FX.c.width,FX.c.height);
+    FX.ps=FX.ps.filter(function(p){return p.life>0&&p.y<innerHeight+70;});
+    for(var i=0;i<FX.ps.length;i++){
+      var p=FX.ps[i];
+      p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.986;p.rot+=p.vr;p.life-=p.dc;
+      x.save();x.translate(p.x*FX.dpr,p.y*FX.dpr);x.rotate(p.rot);
+      x.globalAlpha=Math.max(0,Math.min(1,p.life));x.fillStyle=p.col;
+      if(p.rect)x.fillRect(-p.s*FX.dpr/2,-p.s*FX.dpr/4,p.s*FX.dpr,p.s*FX.dpr/2);
+      else{x.beginPath();x.arc(0,0,p.s*FX.dpr/2,0,6.284);x.fill();}
+      x.restore();
+    }
+    if(FX.ps.length)FX.raf=requestAnimationFrame(step);
+    else{x.clearRect(0,0,FX.c.width,FX.c.height);FX.raf=0;}
+  };
+  FX.raf=requestAnimationFrame(step);
+}
+function burst(x,y,cols,n){
+  if(calm||!FX.x)return;
+  for(var i=0;i<(n||24);i++){
+    var a=Math.random()*6.283,sp=1.4+Math.random()*4.2;
+    FX.ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.4,g:.09,rot:Math.random()*6,vr:(Math.random()-.5)*.3,s:3+Math.random()*5,col:pk(cols),life:1,dc:.016+Math.random()*.014,rect:Math.random()<.5});
+  }
+  fxRun();
+}
+function rain(cols,n){
+  if(calm||!FX.x)return;
+  for(var i=0;i<(n||80);i++){
+    FX.ps.push({x:Math.random()*innerWidth,y:-24-Math.random()*innerHeight*.35,vx:(Math.random()-.5)*1.5,vy:1+Math.random()*2.3,g:.028,rot:Math.random()*6,vr:(Math.random()-.5)*.22,s:5+Math.random()*6,col:pk(cols),life:1.75,dc:.006+Math.random()*.005,rect:true});
+  }
+  fxRun();
+}
+
+/* ═══════════ ИКОНКИ ═══════════ */
+var IC={
+lens:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3L21 21"/><path d="M8 10.5a2.5 2.5 0 0 1 2.5-2.5"/>',
+file:'<path d="M6 2.5h8l4.5 4.5v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-17a1 1 0 0 1 1-1z"/><path d="M14 2.5V7h4.5"/><path d="M8 12h8M8 15.5h8M8 19h5"/>',
+folder:'<path d="M3 6.5a1 1 0 0 1 1-1h5l2 2.5h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+person:'<circle cx="12" cy="7.5" r="3.6"/><path d="M5 20.5c1-4.3 3.6-6.4 7-6.4s6 2.1 7 6.4"/>',
+people:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.8-3.6 3-5.5 6-5.5s5.2 1.9 6 5.5"/><circle cx="16.5" cy="9" r="2.6"/><path d="M16.5 14.5c2.6 0 4.3 1.6 5 4.5"/>',
+talk:'<path d="M4 5.5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-5 4v-4H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><path d="M8 10h8M8 13h5"/>',
+flask:'<path d="M9 2.5h6M10.5 2.5v6L5 19a1.6 1.6 0 0 0 1.4 2.5h11.2A1.6 1.6 0 0 0 19 19l-5.5-10.5v-6"/><path d="M7 15h10"/>',
+pin:'<path d="M12 21.5s-7-6.4-7-11.3A7 7 0 0 1 19 10.2c0 4.9-7 11.3-7 11.3z"/><circle cx="12" cy="10" r="2.6"/>',
+door:'<rect x="6" y="3" width="12" height="18" rx="1"/><circle cx="14.8" cy="12" r="1"/><path d="M4 21h16"/>',
+key:'<circle cx="8" cy="15" r="4.2"/><path d="M11 12L20.5 2.5"/><path d="M16.5 6.5l3 3"/><path d="M13.5 9.5l2 2"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5.5l3.5 2.2"/>',
+eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+eyeoff:'<path d="M3 12s3.5-6 9-6c1.5 0 2.9.4 4.1 1M21 12s-3.5 6-9 6c-1.5 0-2.9-.4-4.1-1"/><path d="M4 4l16 16"/>',
+money:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M5.6 9.2v.01M18.4 14.8v.01"/>',
+heart:'<path d="M12 20.5s-8-5-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 3c0 5.5-8 10.5-8 10.5z"/>',
+knife:'<path d="M12 2.5l2.2 8-2.2 3-2.2-3z"/><path d="M7.5 13.5h9"/><path d="M12 13.5v6"/><path d="M10.5 19.5h3"/>',
+fire:'<path d="M12 3c1 3.2 5 4.8 5 9.2a5 5 0 0 1-10 0c0-2 .9-3.6 2-5.2.5 1.1 1.4 1.8 1.6 1.7C10.2 6.4 11 5 12 3z"/>',
+cup:'<path d="M5 9.5h11v5.5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16"/><path d="M8.5 6.5c0-1 .8-1.2.8-2.2"/>',
+phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.8 18.5h2.4"/>',
+book:'<path d="M4 4.5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4z"/><path d="M20 4.5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/>',
+safe:'<rect x="3.5" y="4" width="17" height="15" rx="2"/><circle cx="12" cy="11.5" r="3.4"/><path d="M12 11.5l2.3-2.3"/><path d="M6 19v2M18 19v2"/>',
+print:'<path d="M12 11a5 5 0 0 1 5 5c0 2-.4 3.6-1 5.2"/><path d="M12 7.5a8.5 8.5 0 0 1 8.5 8.5c0 1.4-.15 2.8-.45 4.2"/><path d="M12 14.2a1.8 1.8 0 0 1 1.8 1.8c0 2-.5 3.9-1.3 5.6"/><path d="M8.6 19.4c.35-1.2.5-2.3.5-3.4a2.9 2.9 0 0 1 .7-1.9"/>',
+letter:'<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 7.5l8.5 6 8.5-6"/>',
+camera:'<path d="M3 8.5a1 1 0 0 1 1-1h3l1.5-2h7L17 7.5h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><circle cx="12" cy="13" r="3.6"/>',
+web:'<circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4v6.2M12 13.6L6.6 16.6M12 13.6l5.4 3"/>',
+alert:'<path d="M12 3.5l9.5 16.5H2.5z"/><path d="M12 9.5v5M12 17.2v.01"/>',
+check:'<path d="M4 12.5l5.5 5.5L20 6.5"/>',
+x:'<path d="M5 5l14 14M19 5L5 19"/>',
+back:'<path d="M14.5 5l-7 7 7 7"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+minus:'<path d="M5 12h14"/>',
+dice:'<rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/>',
+copy:'<rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5v-3a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/>',
+home:'<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
+snd:'<path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/>',
+mute:'<path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+gavel:'<path d="M3 21h9"/><path d="M7.5 17.5V11"/><path d="M4 8.5l6-6 4 4-6 6z"/><path d="M13 6.5l5 5"/><path d="M15.5 4l4.5 4.5"/>',
+star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+note:'<path d="M5 3.5h14v13l-4 4H5z"/><path d="M19 16.5h-4v4"/><path d="M8 8h8M8 11.5h6"/>',
+lock:'<rect x="5" y="10.5" width="14" height="10.5" rx="2"/><path d="M8.5 10.5V7a3.5 3.5 0 0 1 7 0v3.5"/>',
+run:'<circle cx="14" cy="4.5" r="2"/><path d="M13 8l-3 4 3 3 1 6"/><path d="M10 12l-4 1"/><path d="M13 15l-3 6"/><path d="M14 11l4 2"/>',
+save:'<path d="M5 3.5h11l3 3v14H5z"/><path d="M8 3.5v6h7v-6"/><rect x="8" y="13" width="8" height="7.5"/>',
+wifi:'<path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.5a9.5 9.5 0 0 1 13 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2"/>'
+};
+function ic(n,s,cls){
+  return '<svg class="'+(cls||'')+'" width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(IC[n]||IC.file)+'</svg>';
+}
+
+/* ═══════════ ПОРТРЕТЫ ═══════════ */
+var SKIN=['#f0c69c','#dfaa7c','#c68a5e','#a76a42','#7d4a2b','#5d3620'];
+var HAIR=['#1c1a1d','#38291c','#6a492e','#a6753d','#d7a240','#b6442b','#8a8e97','#e6e2d8'];
+var WEAR=['#a8352d','#bd8511','#3c794b','#2d6b8b','#56479a','#8b2e5c','#35454d','#6a583d','#904e2b','#435862'];
+var HSHAPE=[
+'M30 42 Q30 22 48 22 Q66 22 66 42 Q64 33 57 31 Q48 28 40 32 Q33 35 30 42 Z',
+'M30 45 Q27 22 50 21 Q68 23 66 41 Q64 30 53 29 Q40 29 36 38 Q32 41 30 45 Z',
+'M29 40 Q29 20 48 20 Q67 20 67 40 L69 65 Q65 70 60 66 L60 41 Q56 30 48 30 Q40 30 36 41 L36 66 Q31 70 27 65 Z',
+'M31 40 Q31 23 48 23 Q65 23 65 40 Q60 31 48 31 Q36 31 31 40 Z'];
+var BROW=['M37 40.5 L44 39.5 M52 39.5 L59 40.5','M37 39 L44 40.5 M52 40.5 L59 39','M37.5 40 L44 40 M52 40 L58.5 40'];
+var MOUTH=['M43.5 58.5 L52.5 58.5','M43 58 Q48 61.5 53 58','M43.5 59.5 Q48 57 52.5 59.5'];
+function face(name,size,gray){
+  var h=hash(name||'?'),u='f'+(UID++);
+  var sk=SKIN[h%6],hr=HAIR[(h>>>3)%8],cl=WEAR[(h>>>6)%10];
+  var st=(h>>>9)%4,bw=(h>>>11)%3,mo=(h>>>13)%3,ac=(h>>>15)%6;
+  var p=[];
+  p.push('<svg width="'+(size||64)+'" height="'+(size||64)+'" viewBox="0 0 96 96" style="flex:none" aria-hidden="true">');
+  p.push('<defs><radialGradient id="'+u+'b" cx="34%" cy="24%" r="92%">');
+  p.push('<stop offset="0%" stop-color="'+cl+'" stop-opacity=".4"/>');
+  p.push('<stop offset="58%" stop-color="#121a26"/><stop offset="100%" stop-color="#0a1017"/>');
+  p.push('</radialGradient><linearGradient id="'+u+'s" x1="0" y1="0" x2="1" y2="0">');
+  p.push('<stop offset="52%" stop-color="#000" stop-opacity="0"/>');
+  p.push('<stop offset="100%" stop-color="#000" stop-opacity=".34"/></linearGradient>');
+  if(gray)p.push('<filter id="'+u+'g"><feColorMatrix type="saturate" values="0"/></filter>');
+  p.push('</defs><g'+(gray?' filter="url(#'+u+'g)"':'')+'>');
+  p.push('<rect x="1.5" y="1.5" width="93" height="93" rx="19" fill="url(#'+u+'b)" stroke="#2c3a4c" stroke-width="1.5"/>');
+  p.push('<path d="M13 96 Q15 73 34 69 L48 77 L62 69 Q81 73 83 96 Z" fill="'+cl+'"/>');
+  p.push('<path d="M13 96 Q15 73 34 69 L48 77 L62 69 Q81 73 83 96 Z" fill="url(#'+u+'s)"/>');
+  p.push('<path d="M40 70 L48 79 L56 70" fill="none" stroke="#0a1017" stroke-width="1.6" opacity=".5"/>');
+  p.push('<rect x="42" y="57" width="12" height="15" rx="4" fill="'+sk+'"/>');
+  p.push('<rect x="42" y="57" width="12" height="7" fill="#000" opacity=".2"/>');
+  p.push('<circle cx="30.5" cy="46" r="3.2" fill="'+sk+'"/><circle cx="65.5" cy="46" r="3.2" fill="'+sk+'"/>');
+  p.push('<ellipse cx="48" cy="44" rx="17" ry="19" fill="'+sk+'"/>');
+  p.push('<ellipse cx="48" cy="44" rx="17" ry="19" fill="url(#'+u+'s)"/>');
+  p.push('<path d="'+HSHAPE[st]+'" fill="'+hr+'"/>');
+  if(st===3)p.push('<circle cx="48" cy="18.5" r="6.5" fill="'+hr+'"/>');
+  p.push('<path d="'+BROW[bw]+'" stroke="'+hr+'" stroke-width="1.8" stroke-linecap="round" fill="none"/>');
+  p.push('<circle cx="41" cy="45.5" r="2.1" fill="#1b1310"/><circle cx="55" cy="45.5" r="2.1" fill="#1b1310"/>');
+  p.push('<circle cx="41.7" cy="44.8" r=".65" fill="#f2ead9"/><circle cx="55.7" cy="44.8" r=".65" fill="#f2ead9"/>');
+  p.push('<path d="M48 47 L46.6 53 L49.4 53" fill="none" stroke="#000" stroke-opacity=".26" stroke-width="1.3" stroke-linecap="round"/>');
+  p.push('<path d="'+MOUTH[mo]+'" fill="none" stroke="#5a3226" stroke-width="1.3" stroke-linecap="round"/>');
+  if(ac===1)p.push('<circle cx="41" cy="45.5" r="4.7" fill="none" stroke="#d7c7a6" stroke-width="1.3"/><circle cx="55" cy="45.5" r="4.7" fill="none" stroke="#d7c7a6" stroke-width="1.3"/><path d="M45.7 45.5h4.6" stroke="#d7c7a6" stroke-width="1.3"/>');
+  else if(ac===2)p.push('<circle cx="65.5" cy="52" r="1.7" fill="#e0a33c"/>');
+  else if(ac===3)p.push('<path d="M42 55.2 Q48 53 54 55.2 Q51 56.8 48 56.4 Q45 56.8 42 55.2 Z" fill="'+hr+'"/>');
+  else if(ac===4)p.push('<path d="M56.5 49.5 L60 56" stroke="#8a4a3a" stroke-width="1.2" stroke-linecap="round"/>');
+  else if(ac===5)p.push('<path d="M36 51 q2 2 4 0" stroke="#000" stroke-opacity=".2" stroke-width="1.2" fill="none"/>');
+  p.push('<path d="M32.5 34 Q30 42 32 52" stroke="#9fd8ff" stroke-width="1.4" fill="none" opacity=".28" stroke-linecap="round"/>');
+  if(gray)p.push('<rect x="1.5" y="1.5" width="93" height="93" rx="19" fill="#0a1017" opacity=".3"/>');
+  p.push('</g></svg>');
+  return p.join('');
+}
+
+/* ═══════════ СЦЕНЫ ═══════════ */
+function rc(x,y,w,h,f,ex){return'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+f+'"'+(ex||'')+'/>';}
+function cr(x,y,r,f,ex){return'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"'+(ex||'')+'/>';}
+function pt(d,ex){return'<path d="'+d+'"'+(ex||'')+'/>';}
+function anim(vals,dur,beg){return'<animate attributeName="opacity" values="'+vals+'" dur="'+dur+'s"'+(beg?' begin="'+beg+'s"':'')+' repeatCount="indefinite"/>';}
+function starfield(seed,n,w,my){
+  var s=seed,o='';
+  for(var i=0;i<n;i++){
+    s=(s*9301+49297)%233280;var x=(s/233280)*w;
+    s=(s*9301+49297)%233280;var y=(s/233280)*my;
+    s=(s*9301+49297)%233280;var r=.5+(s/233280)*1.1;
+    s=(s*9301+49297)%233280;var a=.24+(s/233280)*.6;
+    o+=cr(x.toFixed(1),y.toFixed(1),r.toFixed(1),'#ece4d3',' opacity="'+a.toFixed(2)+'"');
+  }
+  return o;
+}
+function emblem(size){
+  var p=[];
+  p.push('<svg width="'+(size||64)+'" height="'+(size||64)+'" viewBox="0 0 32 32" aria-hidden="true">');
+  p.push('<circle cx="13" cy="13" r="8" fill="none" stroke="#e0a33c" stroke-width="2.4"/>');
+  p.push(pt('M19 19l9 9',' stroke="#e0a33c" stroke-width="2.4" stroke-linecap="round"'));
+  p.push(pt('M10 13h6M13 10v6',' stroke="#d8434f" stroke-width="1.7" stroke-linecap="round"'));
+  p.push('</svg>');
+  return p.join('');
+}
+function scene(id){
+  var u='s'+(UID++),p=[],i,r,c;
+  p.push('<svg viewBox="0 0 520 230" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Место">');
+  p.push('<defs>');
+  if(id==='hotel'){
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1128"/><stop offset=".62" stop-color="#1b2a4e"/><stop offset="1" stop-color="#3a2652"/></linearGradient>');
+    p.push('<radialGradient id="'+u+'m"><stop offset="0" stop-color="#f2e0af"/><stop offset=".5" stop-color="#f2e0af" stop-opacity=".22"/><stop offset="1" stop-color="#f2e0af" stop-opacity="0"/></radialGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+starfield(11,44,520,124));
+    p.push(cr(96,48,40,'url(#'+u+'m)')+cr(96,48,16,'#f2e0af'));
+    p.push(rc(0,162,520,68,'#0c1d30'));
+    p.push(pt('M0 170H520M0 186H520M0 202H520',' stroke="#e0a33c" stroke-width="1" opacity=".13"'));
+    p.push(rc(298,66,152,100,'#0e1524')+rc(292,58,164,11,'#131e33',' rx="2"'));
+    for(r=0;r<4;r++)for(c=0;c<5;c++)p.push(rc(316+c*24,78+r*24,12,14,(r*5+c)%3===0?'#e0a33c':'#131e33',' rx="1.5"'));
+    p.push(rc(350,140,46,26,'#1b2431'));
+    p.push(pt('M346 140h54l-6-10h-42Z',' fill="#7a1523"'));
+    p.push('<text x="374" y="54" text-anchor="middle" font-family="Georgia,serif" font-size="12" letter-spacing="4" fill="#e0a33c">МЕРИДИАН'+anim('1;.5;1;1;.8;1',6)+'</text>');
+    p.push(pt('M60 172 Q56 126 70 102',' stroke="#0d1422" stroke-width="7" fill="none" stroke-linecap="round"'));
+    p.push(pt('M70 102 Q44 92 28 104 M70 102 Q56 78 38 78 M70 102 Q84 78 106 82 M70 102 Q94 92 108 106',' stroke="#0d1422" stroke-width="6" fill="none" stroke-linecap="round"'));
+    p.push('<ellipse cx="260" cy="228" rx="300" ry="24" fill="#1b2a4e" opacity=".5"/>');
+  }else if(id==='station'){
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#04060d"/><stop offset="1" stop-color="#121b3c"/></linearGradient>');
+    p.push('<radialGradient id="'+u+'p" cx=".34" cy=".3" r="1"><stop offset="0" stop-color="#d67643"/><stop offset=".55" stop-color="#8c3b21"/><stop offset="1" stop-color="#3d1710"/></radialGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+starfield(7,86,520,230));
+    p.push('<ellipse cx="424" cy="242" rx="146" ry="116" fill="url(#'+u+'p)"/>');
+    p.push('<ellipse cx="424" cy="228" rx="180" ry="32" fill="none" stroke="#d7a240" stroke-width="4" opacity=".38" transform="rotate(-12 424 228)"/>');
+    p.push('<ellipse cx="118" cy="56" rx="88" ry="32" fill="#a678e8" opacity=".08"/>');
+    p.push('<ellipse cx="250" cy="112" rx="84" ry="29" fill="none" stroke="#2c3a4c" stroke-width="9"/>');
+    p.push('<ellipse cx="250" cy="112" rx="84" ry="29" fill="none" stroke="#3fb6d8" stroke-width="1.3" opacity=".5"/>');
+    p.push(cr(250,112,20,'#1b2431',' stroke="#2c3a4c" stroke-width="3"'));
+    p.push(pt('M250 92V64M250 132v28M166 112h-38M334 112h38',' stroke="#2c3a4c" stroke-width="6"'));
+    p.push(rc(86,95,42,34,'#1d4763',' rx="3" stroke="#3fb6d8" stroke-width="1"'));
+    p.push(rc(372,95,42,34,'#1d4763',' rx="3" stroke="#3fb6d8" stroke-width="1"'));
+    p.push(pt('M96 95v34M107 95v34M118 95v34M382 95v34M393 95v34M404 95v34',' stroke="#0c1219" stroke-width="2"'));
+    p.push(cr(250,60,4,'#d8434f').replace('/>','>'+anim('1;.1;1',1.6)+'</circle>'));
+    p.push(cr(250,112,7,'#e0a33c',' opacity=".85"'));
+  }else if(id==='theater'){
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#150a11"/><stop offset="1" stop-color="#280e16"/></linearGradient>');
+    p.push('<linearGradient id="'+u+'c" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1523"/><stop offset="1" stop-color="#59101b"/></linearGradient>');
+    p.push('<linearGradient id="'+u+'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0a33c" stop-opacity=".48"/><stop offset="1" stop-color="#e0a33c" stop-opacity="0"/></linearGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+rc(0,188,520,42,'#1a1110'));
+    p.push(pt('M118 192H402M98 206H422M78 222H442',' stroke="#bd8511" stroke-width="1.2" opacity=".3"'));
+    p.push('<polygon points="208,0 308,0 348,192 168,192" fill="url(#'+u+'b)"/>');
+    p.push('<ellipse cx="258" cy="194" rx="90" ry="12" fill="#e0a33c" opacity=".2"/>');
+    p.push(pt('M242 168l30 6-4 16-30-6Z M246 184l-8 16M268 188l6 14',' stroke="#0c0608" stroke-width="5" fill="#0c0608" stroke-linecap="round"'));
+    p.push(cr(236,66,2,'#f2e0af',' opacity=".7"').replace('/>','><animate attributeName="cy" values="66;144;66" dur="14s" repeatCount="indefinite"/></circle>'));
+    p.push(rc(0,0,118,230,'url(#'+u+'c)')+rc(402,0,118,230,'url(#'+u+'c)'));
+    for(i=0;i<5;i++){
+      p.push(pt('M'+(18+i*22)+' 0 Q'+(26+i*22)+' 116 '+(14+i*22)+' 230',' stroke="#480b14" stroke-width="9" fill="none" opacity=".8"'));
+      p.push(pt('M'+(502-i*22)+' 0 Q'+(494-i*22)+' 116 '+(506-i*22)+' 230',' stroke="#480b14" stroke-width="9" fill="none" opacity=".8"'));
+    }
+    p.push(pt('M0 0H520V24Q480 42 440 24Q400 42 360 24Q320 42 280 24Q240 42 200 24Q160 42 120 24Q80 42 40 24Q20 34 0 24Z',' fill="#59101b"'));
+    p.push(pt('M0 24Q40 42 80 24Q120 42 160 24Q200 42 240 24Q280 42 320 24Q360 42 400 24Q440 42 480 24Q500 34 520 24',' stroke="#d7a240" stroke-width="2.4" fill="none" opacity=".65"'));
+  }else if(id==='campus'){
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#19223c"/><stop offset=".6" stop-color="#382d50"/><stop offset="1" stop-color="#bd682e"/></linearGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+starfield(23,24,520,76));
+    p.push(rc(118,116,70,66,'#131c30')+rc(332,116,70,66,'#131c30'));
+    p.push(rc(130,128,13,17,'#e0a33c',' opacity=".85"')+rc(156,128,13,17,'#1b2540'));
+    p.push(rc(346,128,13,17,'#1b2540')+rc(372,128,13,17,'#e0a33c',' opacity=".6"'));
+    p.push(rc(178,100,164,10,'#2a3856'));
+    for(i=0;i<5;i++){
+      var x=194+i*32;
+      p.push(rc(x,108,15,68,'#212c46')+rc(x-3,102,21,8,'#2a3856',' rx="2"')+rc(x-3,174,21,7,'#2a3856',' rx="2"'));
+      p.push(pt('M'+(x+2)+' 110v62',' stroke="#3d4f66" stroke-width="2"'));
+    }
+    p.push(pt('M170 100L260 60L350 100Z',' fill="#212c46"'));
+    p.push(pt('M184 96L260 66L336 96',' stroke="#3d4f66" stroke-width="2.4" fill="none"'));
+    p.push(cr(260,84,7,'#e0a33c',' opacity=".85"'));
+    p.push(rc(174,181,172,7,'#2a3856')+rc(166,188,188,7,'#212c46')+rc(158,195,204,8,'#19223c'));
+    p.push(rc(250,144,20,32,'#e0a33c',' rx="2" opacity=".9"'));
+    p.push(pt('M94 203v-54M94 149q-10-4-10-14',' stroke="#0d1422" stroke-width="5" fill="none" stroke-linecap="round"'));
+    p.push(cr(84,133,12,'#e0a33c',' opacity=".26"')+cr(84,133,5,'#f2e0af'));
+    p.push(pt('M426 203v-54M426 149q10-4 10-14',' stroke="#0d1422" stroke-width="5" fill="none" stroke-linecap="round"'));
+    p.push(cr(436,133,12,'#e0a33c',' opacity=".26"')+cr(436,133,5,'#f2e0af').replace('/>','>'+anim('1;.6;1',4)+'</circle>'));
+    p.push('<ellipse cx="58" cy="174" rx="42" ry="50" fill="#0d1422"/><ellipse cx="474" cy="180" rx="46" ry="54" fill="#0d1422"/>');
+    p.push(rc(0,203,520,27,'#0c1219'));
+  }else if(id==='village'){
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#07121c"/><stop offset="1" stop-color="#132d36"/></linearGradient>');
+    p.push('<radialGradient id="'+u+'m"><stop offset="0" stop-color="#f2e0af"/><stop offset=".5" stop-color="#f2e0af" stop-opacity=".2"/><stop offset="1" stop-color="#f2e0af" stop-opacity="0"/></radialGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+starfield(31,38,520,104));
+    p.push(cr(104,56,50,'url(#'+u+'m)')+cr(104,56,23,'#f2e0af')+cr(97,50,4,'#d7c7a6',' opacity=".55"'));
+    p.push(pt('M0 182Q130 150 260 172T520 166V230H0Z',' fill="#0b1d18"'));
+    p.push(pt('M38 170l16-32 16 32ZM60 170l18-42 18 42ZM88 172l14-26 14 26Z',' fill="#091815"'));
+    p.push(pt('M430 174l17-36 17 36ZM456 176l15-28 15 28Z',' fill="#091815"'));
+    p.push(rc(248,126,130,70,'#221711'));
+    p.push(pt('M248 134h130M248 146h130M248 158h130M248 170h130M248 182h130',' stroke="#38281b" stroke-width="4"'));
+    p.push(pt('M238 128L313 90L388 128Z',' fill="#16110b"')+rc(340,94,12,24,'#16110b'));
+    p.push(pt('M346 88q6-12-2-20q-8-10 2-20',' stroke="#a8b0bd" stroke-width="4" fill="none" opacity=".28" stroke-linecap="round"').replace('/>','>'+anim('.28;.1;.28',7)+'</path>'));
+    p.push(rc(264,142,26,28,'#ffb44a',' rx="2"').replace('/>','>'+anim('1;.72;1;1;.85;1',5)+'</rect>'));
+    p.push(rc(328,142,26,28,'#ffb44a',' rx="2" opacity=".85"'));
+    p.push(pt('M260 138h34M260 174h34M324 138h34M324 174h34',' stroke="#594125" stroke-width="3"'));
+    p.push(pt('M277 142v28M341 142v28M264 156h26M328 156h26',' stroke="#221711" stroke-width="2.4"'));
+    for(i=0;i<26;i++)p.push(rc(8+i*20,196,7,28,'#16110b',' rx="2"'));
+    p.push(cr(198,146,2,'#e0a33c').replace('/>','>'+anim('0;1;0',3.4)+'</circle>'));
+    p.push(cr(414,160,1.8,'#e0a33c').replace('/>','>'+anim('0;.9;0',4.2,1)+'</circle>'));
+    p.push('<ellipse cx="260" cy="226" rx="300" ry="17" fill="#132d36" opacity=".6"/>');
+  }else{
+    p.push('<linearGradient id="'+u+'a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#050a13"/><stop offset=".6" stop-color="#0d2030"/><stop offset="1" stop-color="#113748"/></linearGradient></defs>');
+    p.push(rc(0,0,520,230,'url(#'+u+'a)')+starfield(47,28,520,66));
+    p.push('<polygon points="204,230 250,38 262,38 300,230" fill="#3fb6d8" opacity=".06"><animateTransform attributeName="transform" type="rotate" values="-7 227 230;7 227 230;-7 227 230" dur="22s" repeatCount="indefinite"/></polygon>');
+    var tw=[[28,84,66],[108,56,80],[202,38,92],[308,68,74],[396,50,90]];
+    for(var t=0;t<tw.length;t++){
+      var b=tw[t];
+      p.push(rc(b[0],b[1],b[2],230-b[1],'#0a1522',' stroke="#153046" stroke-width="1.5"'));
+      for(r=0;r<Math.floor((218-b[1])/16);r++)for(c=0;c<Math.floor((b[2]-12)/14);c++){
+        p.push(rc(b[0]+8+c*14,b[1]+8+r*16,8,9,(t*7+r*3+c)%11===0?'#f5c869':'#112d3f'));
+      }
+    }
+    p.push(pt('M250 38V20M443 50V32',' stroke="#2c3a4c" stroke-width="3"'));
+    p.push(cr(250,18,3.4,'#d8434f').replace('/>','>'+anim('1;.15;1',1.8)+'</circle>'));
+    p.push(cr(443,30,3,'#d8434f').replace('/>','>'+anim('1;.15;1',2.4,.6)+'</circle>'));
+    p.push('<ellipse cx="260" cy="232" rx="320" ry="22" fill="#113748" opacity=".55"/>');
+  }
+  p.push('</svg>');
+  return p.join('');
+}
+
+/* ═══════════ КОНТЕНТ ═══════════ */
+/* Методы: instrument — орудие, trace — след, lab — заключение */
+var METHODS=[
+{id:'poison',n:'Отравление',ico:'cup',
+ inst:'Флакон без этикетки',trace:'Остатки жидкости в чашке',
+ lab:'В остатках жидкости — аконитин, смертельная доза. such достать можно только по рецепту или через лабораторный склад.',
+ need:'Доступ к сильнодействующему веществу был у {C}: подпись в журнале выдачи за три дня до убийства.'},
+{id:'blunt',n:'Удар тяжёлым предметом',ico:'gavel',
+ inst:'Тяжёлая статуэтка со сколом',trace:'Кровь и микрочастицы бронзы на ковре',
+ lab:'Форма раны совпадает с основанием статуэтки. На сколе — кровь жертвы и потожировой след одного человека.',
+ need:'Отпечаток на статуэтке принадлежит {C}. Совпадение по 12 признакам.'},
+{id:'strangle',n:'Удушение',ico:'web',
+ inst:'Отрезок шнура с оплавленным концом',trace:'Волокна шнура на воротнике',
+ lab:'Волокна — редкий полиэфир, партия всего 40 бухт. Оплавленный конец означает, что шнур резали зажигалкой.',
+ need:'Такая партия шнура поступала только в мастерскую, где работал(а) {C}.'},
+{id:'blade',n:'Удар клинком',ico:'knife',
+ inst:'Клинок с выщербленной рукоятью',trace:'Характерный разрез и следы стали',
+ lab:'Угол и глубина канала говорят о леворуком ударе снизу вверх. Клинок заточен вручную, кустарно.',
+ need:'{C} — единственный из круга жертвы, кто левша. Это записано в медицинской карте.'},
+{id:'shock',n:'Удар током',ico:'fire',
+ inst:'Переделанный удлинитель',trace:'Оплавление контактов и ожог на руке',
+ lab:'Изоляция срезана ножом, контакты зачищены вручную. Работа человека, который умеет обращаться с проводкой.',
+ need:'В личном деле {C} — допуск к электрощитовой и курсы электробезопасности.'},
+{id:'fall',n:'Толчок с высоты',ico:'run',
+ inst:'Сорванная перила и след ладони',trace:'Отпечаток ладони на перилах',
+ lab:'Точка приложения силы — на уровне 165–172 см. Толчок был один, сильный, справа налево.',
+ need:'Рост иLeading ладонь совпадают с антропометрией {C}.'}
+];
+/* Мотивы: relation — какая связь с жертвой, doc — документ-доказательство */
+var MOTIVES=[
+{id:'debt',n:'Долг, который нельзя было отдать',rel:'должник',
+ doc:'Расписка на крупную сумму',
+ txt:'Расписка: {C} задолжал(а) жертве сумму, которую не смог(ла) бы выплатить и за десять лет. Срок истекал через неделю после убийства. На полях рукой жертвы: «Или деньги, или всё остальное».'},
+{id:'inherit',n:'Наследство, которое уходило мимо',rel:'родственник',
+ doc:'Проект нового завещания',
+ txt:'Проект завещания, датированный за два дня до смерти: {C} вычеркнут(а) полностью. Старая версия, где {C} — единственный выгодоприобретатель, лежала рядом, надорванная.'},
+{id:'jealous',n:'Ревность',rel:'тайный роман',
+ doc:'Переписка и фотография',
+ txt:'Переписка: жертва собиралась уйти к другому. {C} писал(а): «Ты не уйдёшь. Я не позволю». Последнее сообщение — за час до убийства, без ответа.'},
+{id:'blackmail',n:'Шантаж, который зашёл слишком далеко',rel:'шантажист',
+ doc:'Конверт с компроматом',
+ txt:'В конверте — материалы на {C}. Рукой жертвы приписано: «Цена вырастет вдвое с понедельника». {C} знал(а) об этом повышении.'},
+{id:'career',n:'Разрушенная карьера',rel:'подчинённый',
+ doc:'Приказ об отстранении',
+ txt:'Приказ: с понедельника {C} отстранён(а) и лишён(а) доли. Подпись жертвы. Внизу карандашом, почерком {C}: «Он не доживёт до понедельника».'},
+{id:'revenge',n:'Месть за старого мертвеца',rel:'старый враг',
+ doc:'Вырезка о давнем деле',
+ txt:'Пожелтевшая вырезка: десять лет назад показания жертвы отправили в колонию близкого человека {C}. На обороте — свежая надпись: «Долг крови не имеет срока».'}
+];
+/* Тайны невиновных: ложь, разоблачение, признание */
+var SECRETS=[
+{id:'affair',lie:'отрицал(а) близость с жертвой',
+ item:'Фотография из закрытого конверта',
+ find:'На снимке {S} и жертва — слишком близко для деловой встречи. Дата — за месяц до убийства, отель на набережной.',
+ conf:'«Да, между нами было. Год. Я скрывал(а) не убийство, а семью. В ту ночь я был(а) дома, и жена/муж это подтвердит — просто проверьте».'},
+{id:'theft',lie:'умалчивал(а) о пропаже денег',
+ item:'Акт недостачи',
+ find:'Недостача обнаружена за месяц до убийства. Подпись материально ответственного — {S}. Жертва знала и молчала.',
+ conf:'«Я брал(а) из кассы. Немного, два года. Он знал и держал меня на этом крючке. Но убивать того, кто тебя кормит, — глупость».'},
+{id:'fraud',lie:'подделывал(а) документы',
+ item:'Экспертиза подписи',
+ find:'Подпись жертвы на документе — поддельная. Почерковедческая экспертиза указывает на {S}: совпадение по 9 признакам.',
+ conf:'«Подпись я подделал(а). Без неё сделка бы развалилась, и я потерял(а) бы всё. Он собирался это вскрыть — но не в ту ночь».'},
+{id:'addict',lie:'скрывал(а) зависимость',
+ item:'Рецепт из частной клиники',
+ find:'Рецепт на сильнодействующее, выписан на имя {S}. Клиника — за городом, оплата наличными, визиты еженедельно.',
+ conf:'«Я лечусь. Точнее, не лечусь — срываюсь. В ту ночь я был(а) в клинике, там есть журнал посещений. Стыдно было говорить».'},
+{id:'spy',lie:'отрицал(а) слежку за жертвой',
+ item:'Договор с частным детективом',
+ find:'Договор на наблюдение за жертвой. Заказчик — {S}. Отчёты за три недели, последний — за день до убийства.',
+ conf:'«Я следил(а) за ним. Хотел(а) понять, кому он сливает информацию. Это не убийство, это страх. Отчёты покажут, где я был(а) сам(а)».'},
+{id:'kin',lie:'скрывал(а) родство с жертвой',
+ item:'Свидетельство о рождении',
+ find:'В архиве — свидетельство: {S} и жертва — единокровные. Фамилии разные, отец один. Об этом не знал никто.',
+ conf:'«Он был(а) моим братом/сестрой. Никто не знал. Я не хотел(а), чтобы это всплыло — иначе меня бы сделали первым подозреваемым. Что и случилось».'}
+];
+/* Типы связей для графа */
+var RELKIND=[
+{k:'work',n:'деловая',c:'#3fb6d8'},
+{k:'love',n:'личная',c:'#a678e8'},
+{k:'money',n:'денежная',c:'#e0a33c'},
+{k:'blood',n:'родство',c:'#5fbf7a'},
+{k:'conflict',n:'конфликт',c:'#d8434f'}
+];
+
+var SETTINGS={
+hotel:{n:'Отель «Меридиан»',ico:'🏨',scene:'hotel',
+ tag:'Шторм отрезал отель от берега. Убийца — среди шести постояльцев и служащих.',
+ victim:{n:'Аркадий Вельман',r:'владелец отеля',bio:'Скупой, властный, знал о каждом постояльце то, чего тот не знал о себе.'},
+ intro:'Полночь. Шторм оборвал линию и размыл дорогу. Владелец отеля найден мёртвым. Шесть человек заперты под одной крышей до утра — и один из них убийца.',
+ sus:[
+  {n:'Марта Рей',r:'управляющая',bio:'Двенадцать лет держала отель на себе. Знала все счета и все тайны Вельмана.'},
+  {n:'Оскар Гиль',r:'ночной портье',bio:'Работает nights восемь лет. Видит всех, кто входит и выходит, и записывает больше, чем нужно.'},
+  {n:'Лиля фон Дорн',r:'постоянная гостья',bio:'Приезжает каждый месяц в один и тот же номер. Платит наличными, не задаёт вопросов.'},
+  {n:'Бруно Кайзер',r:'шеф-повар',bio:'Звезда местной кухни. Вспыльчив, горд, должен почти всем поставщикам.'},
+  {n:'Аглая Северина',r:'певица бара',bio:'Поёт здесь третий сезон. Раньше пела в столице — о причинах отъезда не говорит.'},
+  {n:'Тео Марш',r:'консьерж',bio:'Достанет что угодно и кого угодно. Игрок. Проигрывает чаще, чем выигрывает.'}],
+ locs:[
+  {n:'Парадная лестница',d:'Мрамор, ковровая дорожка, тяжёлые перила. Тело нашли здесь, у третьего пролёта.',crime:true},
+  {n:'Кабинет владельца',d:'Дубовый стол, сейф за картиной, ящики с бумагами. Замок не взломан.',crime:true},
+  {n:'Винный погреб',d:'Каменные своды, стеллажи до потолка. Пахнет пробкой и сыростью.',crime:true},
+  {n:'Бар «Прилив»',d:'Полумрак, стойка из красного дерева. Бармен ушёл в час, стаканы не убраны.'},
+  {n:'Кухня',d:'Медь, пар, ножи на магнитной ленте. Персонал ушёл после ужина.'},
+  {n:'Номер 307',d:'Угловой номер с видом на море. Постель не тронута, чемодан раскрыт.'},
+  {n:'Котельная',d:'Гул, жар, журнал обходов на гвозде.从这里 виден чёрный ход к пляжу.'},
+  {n:'Архив стойки',d:'Гостевые книги, счета, телефонные распечатки за пять лет.'}],
+ orgs:['«Прибой и К°»','ломбард «Якорь»','агентство «Бриз-Тур»','страховая «Норд-Полис»','фонд «Маяк»']},
+
+station:{n:'Станция «Гелиос»',ico:'🚀',scene:'station',
+ tag:'Замкнутый контур, шесть человек, до связи с Землёй — сорок минут.',
+ victim:{n:'Ирина Ковач',r:'командир станции',bio:'Держала экипаж железной рукой. Подписывала все отчёты — и все отказы.'},
+ intro:'Отсек гидропоники. Командир мертва, шлюзы заперты изнутри, журнал доступа перезаписан. Чужих на станции нет. Убийца дышит тем же воздухом, что и вы.',
+ sus:[
+  {n:'Дэн Ортис',r:'бортинженер',bio:'Знает каждый шлюз и каждую слабую трубу. Спорит с командиром открыто и часто.'},
+  {n:'Юки Танака',r:'врач экспедиции',bio:'Единственный, кто имеет доступ к аптечке с сильнодействующими. Тих, точен, скрытен.'},
+  {n:'Марк Соловьёв',r:'пилот челнока',bio:'Единственный, кто может уйти со станции. Место в челноке — один.'},
+  {n:'Ада Крамер',r:'биолог гидропоники',bio:'Выращивает всё, что здесь едят. Её эксперимент командир закрыла неделю назад.'},
+  {n:'Рэй Фултон',r:'оператор связи',bio:'Слышит Землю первым и последним. Ведёт личный журнал вместо служебного.'},
+  {n:'Нина Волк',r:'специалист по ИИ',bio:'Может стереть любой лог. Утверждает, что не стирает. Проверить нечем.'}],
+ locs:[
+  {n:'Отсек гидропоники',d:'Влажный жар, зелёный свет, шорох насосов. Тело нашли между стеллажами.',crime:true},
+  {n:'Медблок',d:'Стерильно и холодно. Шкаф с препаратами опечатан — но печать свежая.',crime:true},
+  {n:'Шлюзовая камера B',d:'Тесно, гулко. Журнал цикла показывает открытие в ночь убийства.',crime:true},
+  {n:'Серверная ИИ',d:'Холодный гул, ряды индикаторов. Часть логов за ту ночь отсутствует.'},
+  {n:'Купол наблюдения',d:'Планета во весь обзор. Здесь тихо и никто не ходит — так все думают.'},
+  {n:'Кают-компания',d:'Стол на шесть, кофейный автомат, шахматы с недоигранной партией.'},
+  {n:'Технический тоннель',d:'Узко, темно, кабели по стенам. Пролезть можно, но не незаметно.'},
+  {n:'Архив связи',d:'Распечатки сеансов, служебные записки, личные дела экипажа.'}],
+ orgs:['«Орбитал Дайнэмикс»','фонд «Апогей»','страховая «Астра-Гарант»','подрядчик «Вектор-9»','лаборатория «Койпер»']},
+
+theater:{n:'Театр «Аквилон»',ico:'🎭',scene:'theater',
+ tag:'Премьера сорвалась. За кулисами у каждого был мотив.',
+ victim:{n:'Марк Ланской',r:'режиссёр',bio:'Гений и тиран. Ломал карьеры одним росчерком и наслаждался этим.'},
+ intro:'Зал аплодировал пустой сцене двадцать минут. Режиссёр лежал за кулисами всё это время. Грим убран, реквизит разложен — кто-то очень торопился закончить спектакль.',
+ sus:[
+  {n:'Изабель Мор',r:'примадонна',bio:'Двадцать лет на этой сцене. Ланской собирался отдать её роль молодой.'},
+  {n:'Густав Лемке',r:'директор театра',bio:'Считает деньги, а не искусства. Театр в долгах, страховка оформлена весной.'},
+  {n:'Рита Валь',r:'костюмерша',bio:'Знает все швы, все шнуры и все романы труппы. Молчит уже тридцать лет.'},
+  {n:'Феликс Арно',r:'молодой премьер',bio:'Талантлив и голоден. Ланской держал его на вторых ролях четвёртый год.'},
+  {n:'Соня Дель',r:'суфлёрша',bio:'Слышит всё из своей будки. Помнит текст лучше всех — и разговоры тоже.'},
+  {n:'Ян Кречмер',r:'осветитель',bio:'Ходит по колосникам как кошка. Может уронить софит и не оставить следа.'}],
+ locs:[
+  {n:'Закулисье у гримёрки №3',d:'Костюмы, зеркала с лампами, грим. Тело нашли за ширмой.',crime:true},
+  {n:'Колосники',d:'Решётки на высоте двенадцати метров, тросы, софиты. Пыль потревожена.',crime:true},
+  {n:'Склад декораций',d:'Картонные дворцы и ящики с реквизитом. Здесь легко спрятать что угодно.',crime:true},
+  {n:'Кабинет директора',d:'Контракты, страховые полисы, касса. Сейф приоткрыт.'},
+  {n:'Оркестровая яма',d:'Пюпитры, инструменты, темнота. Отсюда слышно всё на сцене.'},
+  {n:'Костюмерная',d:'Швейные машины, бухты шнура, ящики с фурнитурой.'},
+  {n:'Суфлёрская будка',d:'Тесная коробка под сценой. Из неё видно то, чего не видит зал.'},
+  {n:'Архив театра',d:'Программы, приказы, старые афиши и переписка режиссёра.'}],
+ orgs:['агентство «Овация»','касса «Бенефис»','ателье «Муза»','прокат «Рампа-Сервис»','фонд «Премьера»']},
+
+campus:{n:'Университет «Каменный мост»',ico:'🎓',scene:'campus',
+ tag:'Ночь перед распределением гранта. Камеры молчат.',
+ victim:{n:'Павел Гринёв',r:'профессор, глава грантового комитета',bio:'Решал, кто получит миллион, а кто останется никем. Торговался за это.'},
+ intro:'Ночь перед заседанием. Профессор мёртв в старом корпусе, камеры не писали ровно сорок минут, а в ведомости уже вычеркнута одна фамилия.',
+ sus:[
+  {n:'Вера Хмель',r:'доцент, секретарь комитета',bio:'Ведёт протоколы и знает, кто как голосовал. Готовит собственную заявку.'},
+  {n:'Прохор Данилов',r:'аспирант',bio:'Звезда кафедры. Гринёв нашёл в его тексте чужие абзацы.'},
+  {n:'Ася Верещагина',r:'лаборантка',bio:'Выдаёт реактивы под подпись. Знает, кто и что брал в ту неделю.'},
+  {n:'Эдгар Бойм',r:'ректор',bio:'Отвечает за деньги университета. Грант для него — вопрос выживания.'},
+  {n:'Кира Ланге',r:'библиотекарь архива',bio:'Хранит диссертации за сорок лет. Помнит, кто что списывал.'},
+  {n:'Тимур Гасанов',r:'куратор гранта',bio:'Связующее звено между фондом и кафедрой. Берёт процент — не официально.'}],
+ locs:[
+  {n:'Лаборатория 214',d:'Тяги, реактивы, битое стекло. Тело нашли у дальнего стола.',crime:true},
+  {n:'Читальный зал архива',d:'Стеллажи до потолка, лампы под зелёными абажурами. Пыль и тишина.',crime:true},
+  {n:'Кабинет ректора',d:'Ковёр, дуб, портреты предшественников. Сейф за жалюзи.',crime:true},
+  {n:'Лекционный амфитеатр',d:'Полукруг скамей, кафедра, меловая пыль. Пусто и гулко.'},
+  {n:'Подвал старого корпуса',d:'Трубы, архивные ящики, запах сырости. Свет включается не сразу.'},
+  {n:'Крыша обсерватории',d:'Купол, холодный ветер, город внизу. Лестница скрипит на весь корпус.'},
+  {n:'Лаборантская',d:'Журнал выдачи реактивов, весы, шкаф с ядами под замком.'},
+  {n:'Архив комитета',d:'Заявки, протоколы, рецензии и переписка с фондом.'}],
+ orgs:['фонд «Каменный мост»','грант-бюро «Сцилла»','издательство «Фолиант»','лаборатория «Спектр-Лаб»','страховая «Альма-Гарант»']},
+
+village:{n:'Деревня Глухово',ico:'🌾',scene:'village',
+ tag:'Чужака нашли на рассвете. Здесь каждый что-то видел — и каждый молчит.',
+ victim:{n:'Захар Мезенцев',r:'приезжий скупщик леса',bio:'Скупал лес за бесценок и знал, у кого какая беда. Записывал всё в книжечку.'},
+ intro:'Туман лежал в низине, когда скупщика нашли у околицы. В Глухове не любят чужаков и не любят полицию. Но убийца — свой, и вы его найдёте.',
+ sus:[
+  {n:'Дарья Мезенцева',r:'вдова скупщика',bio:'Приехала за мужем три года назад. Жила с ним плохо, хоронить будет богато.'},
+  {n:'Кузьма Лапшин',r:'лесничий',bio:'Знает каждый квартал и каждую вырубка. Скупщик продавал лес за его подписью.'},
+  {n:'Прасковья Юдина',r:'знахарка',bio:'Травы, настои, шепотки. Половина деревни лечится у неё и боится её.'},
+  {n:'Игнат Борода',r:'председатель сельсовета',bio:'Распоряжается землёй и бумагами. Скупщик обещал написать в область.'},
+  {n:'Мотя Кривцова',r:'почтальонша',bio:'Читает открытки и знает, кто кому пишет. Ходит по деревне быстрее слухов.'},
+  {n:'Степан Гурт',r:'тракторист',bio:'Пьёт, работает, снова пьёт. В ту ночь выезжал на поле — так говорит.'}],
+ locs:[
+  {n:'Околица у старого дуба',d:'Мокрая трава, туман, следы волочения. Тело нашли здесь.',crime:true},
+  {n:'Изба Мезенцевых',d:'Крепкий дом, чужие вещи, печка ещё тёплая. Чемодан собран наполовину.',crime:true},
+  {n:'Лесопилка',d:'Опилки, диски, навес. Здесь шумно даже ночью — и никто ничего не слышит.',crime:true},
+  {n:'Дом председателя',d:'Красный угол, бумаги в шкафу, телефон с автоответчиком.'},
+  {n:'Изба знахарки',d:'Пучки трав под потолком, тёмные бутыльки, запах полыни.'},
+  {n:'Почта',d:'Ящики, мешки, журнал вручения. Здесь лежит всё, что не дошло.'},
+  {n:'Заброшенная часовня',d:'Без крыши, с иконой без лица. Место, куда ходят только по нужде.'},
+  {n:'Сельсовет',d:'Книга учёта, карты наделов, договоры и печати в жестяной коробке.'}],
+ orgs:['артель «Бор»','лавка «Кривцов и сын»','заготконтора «Лес-Сбыт»','кооператив «Нива»','скупка «Янтарь»']},
+
+corp:{n:'Корпорация «Синтек»',ico:'💼',scene:'corp',
+ tag:'Сорок четвёртый этаж. Стёкла, деньги и стёртые логи.',
+ victim:{n:'Виктор Штоль',r:'финансовый директор',bio:'Держал в голове всю двойную бухгалтерию. Собирался заговорить — или продать молчание.'},
+ intro:'Сорок четвёртый этаж. Финдиректор мёртв, серверная перезагружена, журналы бейджей стёрты за нужный час. Кто-то очень хорошо знал, где камеры слепнут.',
+ sus:[
+  {n:'Алина Штоль',r:'вице-президент, вдова',bio:'Умнее мужа и холоднее его. Брачный контракт истекал в декабре.'},
+  {n:'Герман Лис',r:'директор по безопасности',bio:'Бывший следователь. Знает, как не оставить следов — и как их найти.'},
+  {n:'Ева Рид',r:'личный ассистент',bio:'Ведёт календарь, читает почту, знает про встречи, которых не было.'},
+  {n:'Кирилл Мазур',r:'трейдер',bio:'Играет на деньги компании. Проиграл сумму, которую нельзя объяснить.'},
+  {n:'Нора Фальк',r:'внутренний аудитор',bio:'Нашла дыру в отчётности. Отчёт должен был уйти в совет через два дня.'},
+  {n:'Дэн Хаас',r:'системный администратор',bio:'Может стереть любой лог и любой бейдж. Утверждает, что не он.'}],
+ locs:[
+  {n:'Переговорная «Панорама»',d:'Стекло во всю стену, стол на двенадцать, город внизу. Тело здесь.',crime:true},
+  {n:'Серверная',d:'Холод, гул, ряды стоек. Журналы за нужный час отсутствуют.',crime:true},
+  {n:'Кабинет финдиректора',d:'Стекло, минимализм, сейф в стене. Ноутбук изъят — но не полицией.',crime:true},
+  {n:'Терраса 44-го этажа',d:'Ветер, курилка, перила по грудь. Камер здесь нет принципиально.'},
+  {n:'Опенспейс трейдеров',d:'Шесть мониторов на человека, ковролин, кофейные стаканы горой.'},
+  {n:'Архив на минус первом',d:'Бетон, стеллажи, коробки с первичкой за десять лет.'},
+  {n:'Лифтовой холл',d:'Турникеты, бейджи, зеркальный потолок. Всё пишется — кроме того часа.'},
+  {n:'Комната аудита',d:'Незапертая переговорка, распечатки, маркерная доска со схемой.'}],
+ orgs:['«Синтек-Капитал»','аудитор «Баланс-Групп»','фонд «Гроссвен»','брокер «Тик-Трейд»','страховая «Вертикаль»']}
+};
+var SETIDS=['hotel','station','theater','campus','village','corp'];
+
+var DIFFS={
+soft:{n:'Стажёр',s:'много времени',budget:150,accomp:false,extraClues:3,
+ d:'150 часов, без сообщника, больше подсказок. Для первого дела.'},
+norm:{n:'Детектив',s:'как задумано',budget:118,accomp:true,extraClues:1,
+ d:'118 часов, возможен сообщник, стандартная плотность улик.'},
+hard:{n:'Комиссар',s:'жёстко',budget:92,accomp:true,extraClues:0,
+ d:'92 часа, сообщник вероятнее, лишних подсказок нет. Каждое действие на счету.'}
+};
+var DIFFIDS=['soft','norm','hard'];
+var RANKS=[[0,'Стажёр'],[150,'Младший следователь'],[380,'Следователь'],[720,'Старший следователь'],[1200,'Инспектор'],[1900,'Комиссар'],[2900,'Легенда сыска']];
+
+/* ═══════════ ГЕНЕРАЦИЯ ДЕЛА ═══════════ */
+var SLOTS=['20:20','21:00','21:40','22:10','22:40','23:10','23:40','00:20'];
+function toMin(t){var a=t.split(':');return (+a[0])*60+(+a[1]);}
+function fmtMin(m){m=((m%1440)+1440)%1440;var h=Math.floor(m/60),x=m%60;return(h<10?'0':'')+h+':'+(x<10?'0':'')+x;}
+
+function buildCase(seed,setId,diffId){
+  var st=SETTINGS[setId],D=DIFFS[diffId];
+  var r=R(rngOf(hash(seed+'|'+setId+'|'+diffId)));
+  var ids=[0,1,2,3,4,5];
+  var cul=r.p(ids);
+  var others=ids.filter(function(i){return i!==cul;});
+  var acc=(D.accomp&&r.chance(diffId==='hard'?.6:.42))?r.p(others):null;
+  var method=r.p(METHODS);
+  var mot=r.p(MOTIVES);
+  var crimeIdx=r.n(3);
+  var crimeLoc=st.locs[crimeIdx];
+  var tIdx=3+r.n(3);
+  var crimeTime=SLOTS[tIdx];
+  var cm=toMin(crimeTime);
+
+  var suspects=st.sus.map(function(s,i){
+    return{id:'s'+i,idx:i,n:s.n,r:s.r,bio:s.bio,
+      relation:null,relKind:null,relText:'',
+      secret:null,alibi:null,motiveNote:'',
+      asked:{},statements:[],susp:0,cleared:false,cracked:false,met:false};
+  });
+
+  /* связи с жертвой */
+  var relPool=r.s(RELKIND.slice());
+  suspects.forEach(function(s,i){
+    var rk=relPool[i%relPool.length];
+    s.relKind=rk.k;s.relation=rk.n;
+    s.relText=relText(rk.k,s,st.victim,r);
+  });
+  /* связь убийцы соответствует мотиву */
+  var mk=motRelKind(mot.id);
+  suspects[cul].relKind=mk.k;suspects[cul].relation=mk.n;
+  suspects[cul].relText=mot.rel+' — '+relText(mk.k,suspects[cul],st.victim,r);
+  suspects[cul].motiveNote=mot.n;
+
+  /* тайны невиновных */
+  var secPool=r.s(SECRETS.slice());
+  var si=0;
+  suspects.forEach(function(s){
+    if(s.idx===cul)return;
+    if(acc!==null&&s.idx===acc){
+      s.secret={id:'accomp',n:'Соучастие',
+        lie:'отрицал(а) любую причастность',
+        item:'Записка о встрече',
+        find:'Записка почерком сообщника: «Я отвлеку. Ты сделай». Найдено там, где никто не должен был искать.',
+        conf:'«Я не убивал(а). Я только помог(ла) — отвёл(а) глаза, открыл(а) дверь. Я не думал(а), что дойдёт до этого».'};
+      return;
+    }
+    s.secret=secPool[si%secPool.length];si++;
+  });
+  suspects[cul].secret={id:'murder',n:'Убийство',lie:'лгал(а) об алиби',
+    item:'',find:'',conf:'«Да. Это я. И я бы сделал(а) это снова — вы не знаете, что он(а) со мной сделал(а)».'};
+
+  /* алиби */
+  var nonCrime=st.locs.map(function(l,i){return i;}).filter(function(i){return i!==crimeIdx;});
+  suspects.forEach(function(s){
+    var place=r.p(nonCrime);
+    var witnessPool=suspects.filter(function(x){return x.idx!==s.idx;});
+    var wit=r.p(witnessPool);
+    var isCul=s.idx===cul;
+    s.alibi={
+      placeIdx:place,place:st.locs[place].n,
+      from:fmtMin(cm-40),to:fmtMin(cm+40),
+      witness:isCul&&acc===null?null:wit.id,
+      witnessName:isCul&&acc===null?null:wit.n,
+      isLie:isCul,verified:false,broken:false
+    };
+  });
+
+  /* улики */
+  var ev=[];var eid=0;
+  function add(o){o.id='e'+(eid++);o.found=false;o.analyzed=false;ev.push(o);return o;}
+  var CN=suspects[cul].n;
+  var proofs={means:[],opp:[],mot:[]};
+
+  /* 1. Орудие / след на месте преступления */
+  var traceEv=add({k:'phys',src:'Место преступления',loc:crimeIdx,ico:method.ico,
+    n:method.trace,
+    txt:'На месте преступления обнаружено: '+method.trace.toLowerCase()+'. Изъято и упаковано. Без экспертизы это просто предмет.',
+    lab:method.lab.replace(' such ',' Это '),
+    needsLab:true,depth:1});
+  /* 2. Заключение, связывающее орудие с убийцей */
+  var meansEv=add({k:'phys',src:'Место преступления',loc:crimeIdx,ico:'print',
+    n:method.inst,
+    txt:'Рядом с телом — '+method.inst.toLowerCase()+'. Предмет явно не отсюда: его принесли и оставили.',
+    lab:method.need.replace('{C}',CN),
+    needsLab:true,depth:2});
+  proofs.means.push(meansEv.id);
+
+  /* 3. След присутствия убийцы (ломает алиби) */
+  var oppEv=add({k:'phys',src:'Место преступления',loc:crimeIdx,ico:'print',
+    n:'След присутствия',
+    txt:'На ручке двери и на краю стола — свежие потожировые следы. Несколько человек трогали эти поверхности в последние часы.',
+    lab:'След снят и сравнён с картотекой. Он принадлежит '+CN+'. Время нанесения — не ранее '+fmtMin(cm-25)+'.',
+    needsLab:true,depth:2});
+  proofs.opp.push(oppEv.id);
+
+  /* 4. Документ мотива */
+  var motEv=add({k:'doc',src:'Документы',loc:7,ico:'file',
+    n:mot.doc,
+    txt:mot.txt.replace(/\{C\}/g,CN),
+    needsLab:false,depth:2});
+  proofs.mot.push(motEv.id);
+
+  /* 5. Свидетельская улика — sighting (от допроса) */
+  var witnessIdx=r.p(others.filter(function(i){return i!==acc;}));
+  var sightEv=add({k:'test',src:'Показания',loc:-1,ico:'eye',
+    n:'Свидетельство: '+suspects[witnessIdx].n,
+    txt:'«Я видел(а) '+CN+' у входа в '+crimeLoc.n.toLowerCase()+' примерно в '+crimeTime+'. Шёл(ла) быстро, оглядывался(ась). Я запомнил(а), потому что это было странно».',
+    needsLab:false,depth:0,fromQuestion:{sus:witnessIdx,q:'saw'}});
+  proofs.opp.push(sightEv.id);
+
+  /* 6. Разоблачающие улики для тайн невиновных */
+  suspects.forEach(function(s){
+    if(s.idx===cul||!s.secret)return;
+    var locIdx;
+    if(s.secret.id==='accomp')locIdx=r.p(nonCrime);
+    else locIdx=r.p(st.locs.map(function(l,i){return i;}));
+    var e=add({k:'doc',src:'Обыск',loc:locIdx,ico:s.secret.id==='affair'?'camera':(s.secret.id==='theft'?'money':(s.secret.id==='addict'?'flask':'file')),
+      n:s.secret.item,
+      txt:s.secret.find.replace(/\{S\}/g,s.n),
+      needsLab:false,depth:2,clears:s.id});
+    s.secret.evId=e.id;
+  });
+
+  /* 7. Нейтрализаторы мотивов невиновных */
+  suspects.forEach(function(s){
+    if(s.idx===cul)return;
+    var nm=r.p(MOTIVES.filter(function(m){return m.id!==mot.id;}));
+    s.motiveNote=nm.n;
+    var e=add({k:'doc',src:'Документы',loc:7,ico:'file',
+      n:'Проверка мотива: '+s.n,
+      txt:neutralText(nm.id,s.n,st.victim.n,r,st),
+      needsLab:false,depth:2,neutral:s.id});
+    s.neutralEv=e.id;
+  });
+
+  /* 8. Фоновые улики с мягкими подсказками */
+  var fillerCount=8+D.extraClues;
+  for(var f=0;f<fillerCount;f++){
+    var li=r.n(st.locs.length);
+    var ft=fillerText(r,st,suspects,cul,crimeLoc,crimeTime,method,mot,acc);
+    add({k:'bg',src:'Обыск',loc:li,ico:ft.ico,n:ft.n,txt:ft.txt,needsLab:false,depth:r.chance(.55)?1:2});
+  }
+
+  /* распределение улик по местам: гарантируем находимость */
+  st.locs.forEach(function(l,i){
+    var here=ev.filter(function(e){return e.loc===i;});
+    if(here.length===0){
+      var ft2=fillerText(r,st,suspects,cul,crimeLoc,crimeTime,method,mot,acc);
+      add({k:'bg',src:'Обыск',loc:i,ico:ft2.ico,n:ft2.n,txt:ft2.txt,needsLab:false,depth:1});
+    }
+  });
+
+  /* хронология */
+  var timeline=SLOTS.map(function(t,i){
+    return{t:t,label:i===tIdx?'Преступление. Точное время установлено экспертизой.':timelineText(r,st,suspects,i,tIdx),
+      known:i<tIdx-1,crime:i===tIdx};
+  });
+  timeline[tIdx-1].known=false;
+
+  /* вопросы допроса */
+  var qs=[
+    {id:'alibi',q:'Где вы были в момент убийства?',cost:2,ico:'clock'},
+    {id:'rel',q:'Кем вам была жертва?',cost:2,ico:'people'},
+    {id:'who',q:'У кого были причины его убить?',cost:3,ico:'alert'},
+    {id:'wit',q:'Кто подтвердит ваши слова?',cost:2,ico:'person'},
+    {id:'place',q:'Что вы знаете об этом месте?',cost:2,ico:'pin'},
+    {id:'saw',q:'Что необычного вы видели той ночью?',cost:3,ico:'eye'},
+    {id:'press',q:'Вы что-то скрываете. Что именно?',cost:3,ico:'lock'}
+  ];
+
+  var initial=[];
+  initial.push('Тело обнаружено в '+crimeLoc.n.toLowerCase()+'. Первичный осмотр: '+method.n.toLowerCase()+'.');
+  initial.push('Экспертиза назначила время смерти: около '+crimeTime+', погрешность ±20 минут.');
+  initial.push('Все шестеро находились в пределах досягаемости. Никто не мог покинуть место.');
+
+  return{
+    seed:seed,setId:setId,diff:diffId,no:'№'+seed,
+    budget:D.budget,left:D.budget,
+    victim:st.victim,intro:st.intro,
+    truth:{cul:suspects[cul].id,culN:CN,acc:acc===null?null:suspects[acc].id,
+      accN:acc===null?null:suspects[acc].n,
+      method:method.id,methodN:method.n,place:crimeIdx,placeN:crimeLoc.n,
+      mot:mot.id,motN:mot.n,time:crimeTime,timeIdx:tIdx},
+    proofs:proofs,
+    suspects:suspects,
+    locs:st.locs.map(function(l,i){return{id:'l'+i,idx:i,n:l.n,d:l.d,crime:!!l.crime,visits:0,dug:0};}),
+    ev:ev,qs:qs,timeline:timeline,initial:initial,
+    journal:[],notes:'',
+    warned:false,accused:null,ending:null,
+    createdAt:Date.now(),cid:seed+'-'+Date.now()
+  };
+}
+function motRelKind(id){
+  if(id==='debt')return{k:'money',n:'денежная'};
+  if(id==='inherit')return{k:'blood',n:'родство'};
+  if(id==='jealous')return{k:'love',n:'личная'};
+  if(id==='blackmail')return{k:'conflict',n:'конфликт'};
+  if(id==='career')return{k:'work',n:'деловая'};
+  return{k:'conflict',n:'конфликт'};
+}
+function relText(k,s,v,r){
+  var T={
+    work:['работал(а) под началом жертвы и зависел(а) от её решений','вёл(а) с жертвой общее дело и делил(а) ответственность','был(а) нанят(а) жертвой и мог(ла) быть уволен(а) в любой день'],
+    love:['состоял(а) с жертвой в отношениях, о которых не знали другие','был(а) влюблён(а) в жертву без взаимности уже несколько лет','разошёлся(ась) с жертвой, но не отпустил(а)'],
+    money:['был(а) должен(а) жертве и просил(а) отсрочки','вложился(ась) в дело жертвы и не мог(ла) забрать деньги','получал(а) от жертвы регулярные выплаты — до недавнего времени'],
+    blood:['связан(а) с жертвой родством, о котором предпочитал(а) молчать','был(а) в семье жертвы человеком без права голоса','делил(а) с жертвой наследство ещё при её жизни'],
+    conflict:['открыто конфликтовал(а) с жертвой при свидетелях','судился(ась) с жертвой и проиграл(а)','писал(а) на жертву жалобы, которые ничего не изменили']
+  };
+  return r.p(T[k]||T.work);
+}
+function neutralText(mid,who,vic,r,st){
+  var o=r.p(st.orgs);
+  var T={
+    debt:'Да, '+who+' был(а) должен(а) жертве. Но справка из '+o+' показывает: долг закрыт полностью за одиннадцать дней до убийства. Мотива больше нет.',
+    inherit:'Черновик завещания в пользу '+who+' действительно существовал. Однако нотариус зарегистрировал отказ: '+who+' сам(а) вышел(ла) из наследства месяц назад, письменно.',
+    jealous:'Роман был. Но переписка показывает: '+who+' сам(а) оборвал(а) связь и уже полгода жил(а) с другим человеком. Ревность погасла задолго до той ночи.',
+    blackmail:'Компромат на '+who+' существовал. Но材料的 носитель найден сожжённым ещё за две недели до смерти — шантаж прекратился, и '+who+' об этом знал(а).',
+    career:'Приказ об отстранении '+who+' готовился. Но фонд '+o+' уже подтвердил(а) отдельное финансирование: '+who+' уходил(а) на повышение, а не на улицу.',
+    revenge:'Старая история была. Но человек, за которого мстил(а) '+who+', жив: справка из колонии dated прошлым годом. Месть失去了 смысл.'
+  };
+  return (T[mid]||T.debt).replace('材料的','этот').replace(' dated ',' от ').replace('失去了','потеряла');
+}
+function timelineText(r,st,sus,i,tIdx){
+  var s=r.p(sus);
+  var opts=[
+    s.n+' замечен(а) в '+r.p(st.locs).n.toLowerCase()+'. Ничего unusual.',
+    'Короткий разговор '+s.n+' с жертвой. Свидетели говорят о повышенных тонах.',
+    s.n+' выходил(а) на воздух. Вернулся(ась) через несколько минут.',
+    'В '+r.p(st.locs).n.toLowerCase()+' погас свет на пару минут. Никто не придал значения.',
+    s.n+' звонил(а) куда-то и говорил(а) тихо, отвернувшись.',
+    'Персонал разошёлся. Остались только те, кто жил или дежурил.'
+  ];
+  return r.p(opts).replace('unusual','особенного');
+}
+function fillerText(r,st,sus,cul,crimeLoc,crimeTime,method,mot,acc){
+  var s=r.p(sus),o=r.p(st.orgs),l=r.p(st.locs);
+  var pool=[
+    {ico:'letter',n:'Обрывок записки',txt:'«...не приходи больше, всё изменилось». Бумага дешёвая, чернила расплылись. Автор не установлен.'},
+    {ico:'money',n:'Квитанция '+o,txt:'Оплата «за услуги», сумма с тремя нулями, дата — за неделю до убийства. Подпись неразборчива.'},
+    {ico:'phone',n:'Телефонная распечатка',txt:'Двадцать три минуты разговора поздно вечером. Абонент — номер-автомат. Кто звонил, установить нельзя.'},
+    {ico:'cup',n:'Две чашки',txt:'На подносе две чашки. Одна выпита, вторая остыла нетронутой. Кто-то ждал гостя, который не пришёл — или уже ушёл.'},
+    {ico:'key',n:'Связка ключей',txt:'Четыре ключа, один не подходит ни к одной двери здесь. Бирка стёрта. Кто-то носил его годами.'},
+    {ico:'fire',n:'Обугленные бумаги',txt:'Кто-то жёг документы незадолго до полуночи. Уцелел угол с печатью '+o+'. Остальное — пепел.'},
+    {ico:'safe',n:'Приоткрытый сейф',txt:'Сейф не взломан — открыт кодом. Пусто. Код знали двое, но список знавших пропал.'},
+    {ico:'book',n:'Журнал с вырванной страницей',txt:'Страница вырвана аккуратно, по линейке. Остался продавленный след: дата — вечер убийства.'},
+    {ico:'clock',n:'Остановившиеся часы',txt:'Часы разбиты и стоят на '+crimeTime+'. Совпадение с временем смерти — или чья-то попытка его подчеркнуть.'},
+    {ico:'door',n:'Следы у чёрного входа',txt:'Замок не повреждён, но щеколда опущена. Её можно закрыть снаружи ниткой через щель — старый трюк.'},
+    {ico:'print',n:'Смазанный отпечаток',txt:'След есть, но смазан: пригоден только чтобы исключить человека, не чтобы опознать.'},
+    {ico:'camera',n:'Фотография без подписи',txt:'Двое за столом, лица вполоборота. Один — точно не из здешних. Дата на обороте стёрта ногтем.'},
+    {ico:'eye',n:'Записка наблюдателя',txt:'Кто-то вёл учёт перемещений: столбик времён и инициалы. Почерк не служебный, а частный.'},
+    {ico:'flask',n:'Пустая упаковка',txt:'Упаковка из-под препарата. Серия затёрта, но партия редкая — таких в городе немного.'},
+    {ico:'person',n:'Слух от персонала',txt:'«'+s.n+' в последнее время сам(а) не свой(я)». Кто именно сказал — не помнят. Проверять или нет — решать вам.'}
+  ];
+  return r.p(pool);
+}
+
+/* ═══════════ СОСТОЯНИЕ ═══════════ */
+var A={
+  screen:'menu',C:null,tab:'people',fileTab:'sus',
+  selEv:null,sheet:null,pickFor:null,
+  snd:AU.on,prevPhase:null,armed:false
+};
+var CAREER=null;
+function career(){
+  if(CAREER)return CAREER;
+  var c=null;try{c=JSON.parse(LS.get('rzv_career','null'));}catch(e){}
+  if(!c||typeof c!=='object')c={};
+  c.xp=c.xp||0;c.cases=c.cases||0;c.solved=c.solved||0;c.perfect=c.perfect||0;c.best=c.best||0;
+  c.sets=c.sets||{};c.arch=c.arch||[];c.last=c.last||'';
+  CAREER=c;return c;
+}
+function saveCareer(){try{LS.set('rzv_career',JSON.stringify(career()));}catch(e){}}
+function rankOf(xp){
+  var i=0;for(var k=0;k<RANKS.length;k++)if(xp>=RANKS[k][0])i=k;
+  var nx=RANKS[i+1]||null,b=RANKS[i][0];
+  return{n:RANKS[i][1],i:i,next:nx?nx[1]:null,left:nx?nx[0]-xp:0,pct:nx?Math.min(100,Math.round((xp-b)/(nx[0]-b)*100)):100};
+}
+function saveGame(){
+  if(!A.C)return;
+  try{LS.set('rzv_save',JSON.stringify(A.C));}catch(e){}
+}
+function loadGame(){
+  try{var c=JSON.parse(LS.get('rzv_save','null'));if(c&&c.suspects&&c.ev)return c;}catch(e){}
+  return null;
+}
+function clearSave(){LS.del('rzv_save');}
+
+/* ═══════════ ПРОИЗВОДНЫЕ ═══════════ */
+function sus(id){var r=null;A.C.suspects.forEach(function(s){if(s.id===id)r=s;});return r;}
+function evById(id){var r=null;A.C.ev.forEach(function(e){if(e.id===id)r=e;});return r;}
+function found(){return A.C.ev.filter(function(e){return e.found;});}
+function locByIdx(i){return A.C.locs[i];}
+function evColor(e){
+  if(e.k==='test')return'#a678e8';
+  if(e.k==='doc')return'#3fb6d8';
+  if(e.clears)return'#5fbf7a';
+  if(e.neutral)return'#5fbf7a';
+  if(A.C.proofs.means.indexOf(e.id)>=0||A.C.proofs.opp.indexOf(e.id)>=0||A.C.proofs.mot.indexOf(e.id)>=0)return'#e0a33c';
+  return'#8a94a3';
+}
+function evKindLabel(e){
+  if(e.k==='test')return'Показание';
+  if(e.k==='doc')return'Документ';
+  if(e.needsLab&&!e.analyzed)return'Вещдок · нужна экспертиза';
+  if(e.needsLab&&e.analyzed)return'Вещдок · экспертиза готова';
+  return'Материал';
+}
+function canUseAsProof(e){return e.found&&(!e.needsLab||e.analyzed);}
+function journal(kind,text){
+  A.C.journal.unshift({left:A.C.left,kind:kind,text:text});
+  if(A.C.journal.length>200)A.C.journal.pop();
+}
+function spend(n){
+  A.C.left=Math.max(0,A.C.left-n);
+  if(A.C.left<=12&&A.C.left>0)sfx('clock');
+}
+function contradictions(){
+  var C=A.C,out=[];
+  var cul=sus(C.truth.cul);
+  /* алиби убийцы против следа */
+  var alibiKnown=cul.asked.alibi;
+  if(alibiKnown){
+    C.proofs.opp.forEach(function(id){
+      var e=evById(id);
+      if(!e||!canUseAsProof(e))return;
+      out.push({id:'opp-'+e.id,who:cul.n,
+        a:{t:'Слова '+cul.n,txt:'«С '+cul.alibi.from+' до '+cul.alibi.to+' я был(а) в '+cul.alibi.place.toLowerCase()+'. Можете спросить кого угодно».'},
+        b:{t:e.n,txt:e.analyzed&&e.lab?e.lab:e.txt},
+        hint:'Алиби не выдерживает проверки. Предъявите это '+cul.n+' — или используйте как доказательство возможности.',
+        strong:true});
+    });
+  }
+  /* тайны невиновных */
+  C.suspects.forEach(function(s){
+    if(s.idx===cul.idx||!s.secret||!s.secret.evId)return;
+    var e=evById(s.secret.evId);
+    if(!e||!e.found)return;
+    var said=s.asked.rel||s.asked.press||s.asked.alibi;
+    if(!said)return;
+    out.push({id:'sec-'+s.id,who:s.n,
+      a:{t:'Поведение '+s.n,txt:s.n+' '+s.secret.lie+' и уходит(а) от прямых ответов.'},
+      b:{t:e.n,txt:e.txt},
+      hint:'Ложь может объясняться не убийством. Предъявите улику — и увидите, что за ней.',
+      strong:false,clears:s.id});
+  });
+  return out;
+}
+function knownRelations(){
+  var C=A.C,out=[];
+  C.suspects.forEach(function(s){
+    if(s.asked.rel||s.met)out.push({s:s,k:s.relKind,t:s.relation,txt:s.relText});
+  });
+  return out;
+}
+function progress(){
+  var C=A.C;
+  var f=found().length,tot=C.ev.length;
+  var asked=0,total=C.suspects.length*C.qs.length;
+  C.suspects.forEach(function(s){asked+=Object.keys(s.asked).length;});
+  return{ev:f,evTotal:tot,q:asked,qTotal:total,clear:C.suspects.filter(function(s){return s.cleared;}).length};
+}
+
+/* ═══════════ ДЕЙСТВИЯ ═══════════ */
+function actGuard(cost){
+  if(!A.C||A.C.ending)return false;
+  if(A.C.left<cost){toast('Времени не хватает. Нужно '+hrs(cost)+', осталось '+hrs(A.C.left)+'.','bad');sfx('err');return false;}
+  return true;
+}
+function afterAct(){
+  saveGame();
+  if(A.C.left<=0&&!A.C.ending){
+    finishTimeOut();
+  }
+  render();
+}
+function reveal(e,silent){
+  if(e.found)return false;
+  e.found=true;
+  if(!silent){
+    journal('find','Найдено: '+e.n+' ('+e.src.toLowerCase()+').');
+    toast('Новая улика: '+e.n,'find');
+    sfx('find');vib(16);
+    var col=evColor(e);
+    setTimeout(function(){
+      var el=$('#ev-'+e.id);
+      if(el&&el.getBoundingClientRect){var r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+40,[col,'#ece4d3','#f5c869'],22);}
+    },40);
+  }
+  return true;
+}
+function doSearch(li,deep){
+  var cost=deep?6:3;
+  if(!actGuard(cost))return;
+  var L=locByIdx(li);
+  var pool=A.C.ev.filter(function(e){return e.loc===li&&!e.found&&e.depth<=(deep?2:1);});
+  if(!pool.length)pool=A.C.ev.filter(function(e){return e.loc===li&&!e.found;});
+  spend(cost);
+  L.visits++;if(deep)L.dug=2;else L.dug=Math.max(L.dug,1);
+  if(!pool.length){
+    journal('','Обыск в '+L.n.toLowerCase()+' ничего нового не дал.');
+    toast('Здесь больше ничего нет. Время потрачено.','warn');
+    sfx('warn');
+  }else{
+    var take=deep?Math.min(3,pool.length):Math.min(2,pool.length);
+    var got=[];
+    for(var i=0;i<take;i++){var e=pool[i];if(reveal(e,true))got.push(e);}
+    got.forEach(function(e,i){
+      setTimeout(function(){
+        toast('Найдено: '+e.n,'find');sfx('find');
+      },i*260);
+    });
+    journal('find',(deep?'Тщательный обыск':'Осмотр')+' в '+L.n.toLowerCase()+': найдено '+got.length+' '+plural(got.length,['улика','улики','улик'])+'.');
+    vib(18);
+    if(A.C.left>0)sfx('page');
+  }
+  afterAct();
+}
+function doAsk(sid,qid){
+  var s=sus(sid),q=null;
+  A.C.qs.forEach(function(x){if(x.id===qid)q=x;});
+  if(!q||s.asked[qid])return;
+  if(!actGuard(q.cost))return;
+  spend(q.cost);
+  s.asked[qid]=true;s.met=true;
+  var txt=answerFor(s,qid);
+  s.statements.push({q:q.q,a:txt});
+  journal('talk',s.n+' — '+q.q);
+  sfx('talk');
+  A.sheet={kind:'answer',sid:sid,q:q.q,a:txt,newEv:null};
+  /* вопрос-свидетельство создаёт улику */
+  var created=null;
+  A.C.ev.forEach(function(e){
+    if(e.fromQuestion&&e.fromQuestion.sus===s.idx&&e.fromQuestion.q===qid){
+      if(reveal(e,true)){created=e;journal('find','Получено свидетельство: '+s.n+'.');}
+    }
+  });
+  if(created){A.sheet.newEv=created;setTimeout(function(){sfx('find');toast('Записано в улики: '+created.n,'find');},400);}
+  afterAct();
+}
+function answerFor(s,qid){
+  var C=A.C,st=SETTINGS[C.setId],cul=sus(C.truth.cul);
+  if(qid==='alibi'){
+    var a=s.alibi;
+    var base='«С '+a.from+' до '+a.to+' я был(а) в '+a.place.toLowerCase()+'. ';
+    if(a.witnessName)base+=a.witnessName+' может это подтвердить — мы виделись». ';
+    else base+='Подтвердить некому, я был(а) один(одна)». ';
+    if(a.isLie)base+='\n\nОн(а) отвечает слишком ровно. Пауза перед временем — заметная.';
+    else base+='\n\nГоворит спокойно, детали не путает.';
+    return base;
+  }
+  if(qid==='rel'){
+    var hide=s.secret&&(s.secret.id==='affair'||s.secret.id==='kin');
+    if(hide)return'«Никем. Рабочие отношения, не более». \n\nВзгляд уходит в сторону. Формулировка заучена.';
+    return'«'+cap(s.relText)+'». \n\n'+(s.relKind==='conflict'?'Не скрывает раздражения.':'Говорит ровно, без ужимок.');
+  }
+  if(qid==='who'){
+    var pointed=C.suspects.filter(function(x){return x.idx!==s.idx;});
+    var t=s.idx===C.truth.cul?pointed.filter(function(x){return x.idx!==C.truth.cul;})[0]:cul;
+    var target=s.idx===C.truth.cul?pk(pointed):cul;
+    return'«Если честно — '+target.n+'. '+target.motiveNote+'. Я не удивлюсь, если это он(а)». \n\n'+(s.idx===C.truth.cul?'Указывает быстро, будто подготовился.':'Говорит с неохотой, но имя называет.');
+  }
+  if(qid==='wit'){
+    if(s.alibi.witnessName)return'«Спросите '+s.alibi.witnessName+'. Мы пересекались как раз в это время». \n\nИмя названо без запинки.';
+    return'«Никого. Я был(а) один(одна), и это моя проблема». \n\nПожимает плечами, но не отводит глаз.';
+  }
+  if(qid==='place'){
+    var L=locByIdx(C.truth.place);
+    var hint=s.idx===C.truth.cul
+      ?'«Не был(а) там давно. Там нечего делать». \n\nОтвечает раньше, чем вы закончили вопрос.'
+      :'«'+L.n+'? Там '+ (L.idx%2===0?'вечно кто-то ходит, даже ночью':'свет плохой и дверь заедает')+'. Если искали место, где никто не увидит — это оно». \n\nДаёт деталь, которую нельзя знать, не бывав там.';
+    return hint;
+  }
+  if(qid==='saw'){
+    var e=null;
+    C.ev.forEach(function(x){if(x.fromQuestion&&x.fromQuestion.sus===s.idx)e=x;});
+    if(e)return e.txt+'\n\nЭто записано дословно и приобщено к делу.';
+    var noise=pk([
+      '«Слышал(а) шаги, но не смотрел(а). Здесь все ходят». \n\nНичего проверяемого.',
+      '«Свет мигнул около полуночи. Я решил(а), что генератор». \n\nВозможно, важно. Возможно, нет.',
+      '«Кто-то выходил на воздух и вернулся мокрый. Лица не разглядел(а)». \n\nСлишком общо, чтобы использовать.'
+    ]);
+    return noise;
+  }
+  /* press */
+  if(s.secret&&s.secret.id!=='murder'&&!s.cleared){
+    return'«Мне нечего скрывать». \n\nРуки сжимает, отвечает на полсекунды позже. Что-то есть — но слова не дадут. Нужна улика.';
+  }
+  if(s.cleared)return'«Я уже всё рассказал(а) после того, как вы показали мне бумаги. Больше ничего нет». \n\nСмотрит прямо. Похоже, правда.';
+  if(s.idx===C.truth.cul)return'«Вы теряете время со мной». \n\nРаздражение настоящее. Это ничего не доказывает — но и не исключает.';
+  return'«Нечего. Спрашивайте о деле». \n\nСпокойно.';
+}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function doConfront(sid,eid){
+  var s=sus(sid),e=evById(eid);
+  if(!e||!e.found)return;
+  if(!actGuard(2))return;
+  spend(2);
+  closeSheet();
+  var C=A.C;
+  var res=null;
+  /* разоблачение тайны невиновного */
+  if(e.clears===sid&&s.secret&&s.secret.id!=='murder'){
+    s.cleared=true;s.cracked=true;
+    s.alibi.verified=true;
+    res={kind:'clear',title:'Ложь объяснилась',
+      txt:s.secret.conf.replace(/\{S\}/g,s.n),
+      after:s.n+' больше не выглядит подозреваемым. Тайна была другой. Алиби подтверждено.'};
+    journal('good',s.n+' раскрыл(а) свою тайну и исключён(а) из круга подозреваемых.');
+    sfx('crack');vib([20,50,20]);
+  }else if(sid===C.truth.cul&&(C.proofs.opp.indexOf(eid)>=0||C.proofs.means.indexOf(eid)>=0)&&canUseAsProof(e)){
+    var had=C.warned;
+    C.warned=true;
+    s.cracked=true;
+    var extra='';
+    if(C.truth.acc){
+      var ac=sus(C.truth.acc);
+      extra='\n\nИ ещё: «Я был(а) не один(одна). Мне открыли дверь. Спросите '+ac.n+' — но вам он(а) не признается». ';
+      ac.met=true;
+      journal('bad','Убийца проговорился о сообщнике: '+ac.n+'.');
+    }
+    res={kind:'crack',title:'Он(а) дрогнул(а)',
+      txt:'«Это ничего не значит. Мало ли кто там был... Я...»\n\nГолос садится. Руки tremble. Это не признание — но это трещина.'+extra,
+      after:had?'Вы уже пугали его этой уликой. Теперь он(а) точно знает, что вы знаете. Если не хватит времени — уйдёт.'
+        :'Внимание: подозреваемый понял, что вы на него смотрите. Если дело не будет закрыто вовремя, он(а) может исчезнуть.'};
+    journal('bad',s.n+' не выдержал(а) предъявления улики. Дело сдвинулось, но он(а) настороже.');
+    sfx('crack');vib([30,60,30]);
+  }else{
+    res={kind:'miss',title:'Не то и не тому',
+      txt:'«И что? Причём здесь я?»\n\nУлика не бьёт по его словам. Вы потеряли два часа и ничего не получили.',
+      after:'Подбирайте улику, которая противоречит конкретным словам этого человека. Смотрите раздел «Противоречия».'};
+    journal('','Предъявление улики '+s.n+' не дало результата.');
+    sfx('warn');
+  }
+  A.sheet={kind:'confront',sid:sid,res:res};
+  afterAct();
+}
+function doLab(eid){
+  var e=evById(eid);
+  if(!e||!e.found||e.analyzed||!e.needsLab)return;
+  if(!actGuard(4))return;
+  spend(4);
+  e.analyzed=true;
+  journal('find','Экспертиза: '+e.n+'.');
+  sfx('lab');vib(14);
+  toast('Экспертиза готова: '+e.n,'ok');
+  A.sheet={kind:'lab',eid:eid};
+  afterAct();
+}
+function doRecords(li){
+  if(!actGuard(4))return;
+  var pool=A.C.ev.filter(function(e){return e.loc===li&&!e.found&&(e.k==='doc'||e.neutral);});
+  if(!pool.length)pool=A.C.ev.filter(function(e){return e.loc===li&&!e.found;});
+  spend(4);
+  if(!pool.length){
+    toast('В документах больше ничего нового.','warn');sfx('warn');
+    journal('','Проверка документов ничего не дала.');
+  }else{
+    var got=[];
+    for(var i=0;i<Math.min(2,pool.length);i++){if(reveal(pool[i],true))got.push(pool[i]);}
+    got.forEach(function(e,i){setTimeout(function(){toast('Из документов: '+e.n,'find');sfx('find');},i*260);});
+    journal('find','Проверка документов: '+got.length+' '+plural(got.length,['запись','записи','записей'])+'.');
+  }
+  afterAct();
+}
+function doTimeline(){
+  if(!actGuard(3))return;
+  spend(3);
+  var C=A.C;
+  var unk=C.timeline.filter(function(t){return!t.known;});
+  if(!unk.length){toast('Хронология уже восстановлена полностью.','warn');sfx('warn');}
+  else{
+    var t=unk[0];t.known=true;
+    journal('find','Хронология: '+t.t+' — '+t.label);
+    toast('Хронология уточнена: '+t.t,'ok');sfx('page');
+  }
+  afterAct();
+}
+function setSusp(sid,v){
+  var s=sus(sid);
+  s.susp=v;
+  journal('',s.n+': отметка «'+['не подозреваю','под вопросом','главный подозреваемый'][v]+'».');
+  sfx('pick');saveGame();render();
+}
+function finishTimeOut(){
+  var C=A.C;
+  var fled=C.warned;
+  C.ending=makeEnding(null,fled);
+  A.screen='end';
+  clearSave();
+}
+/* ═══════════ ОБВИНЕНИЕ И ФИНАЛЫ ═══════════ */
+function makeEnding(acc,fled){
+  var C=A.C,T=C.truth;
+  var cul=sus(T.cul);
+  var right=acc&&acc.who===T.cul;
+  var pm=acc&&acc.means&&C.proofs.means.indexOf(acc.means)>=0;
+  var po=acc&&acc.opp&&C.proofs.opp.indexOf(acc.opp)>=0;
+  var pt2=acc&&acc.mot&&C.proofs.mot.indexOf(acc.mot)>=0;
+  var chain=(pm?1:0)+(po?1:0)+(pt2?1:0);
+  var accRight=acc&&T.acc&&acc.acc===T.acc;
+  var cleared=C.suspects.filter(function(s){return s.cleared;}).length;
+  var pr=progress();
+  var key,vc,title,desc;
+  if(!acc){
+    if(fled){key='fled';vc='#d8434f';title='Убийца исчез';
+      desc='Вы надавили на него, но не собрали дело. К утру '+cul.n+' не было ни в одном из помещений. Дело осталось открытым — и это худший из исходов.';}
+    else{key='timeout';vc='#d8434f';title='Дело ушло в архив';
+      desc='Время вышло. Улики лежат в коробке, версии — в головах. Никто не назван, никто не отвечает. Через год папку подпишут «в связи с неустановлением».';}
+  }else if(!right){
+    key='wrong';vc='#d8434f';title='Обвинён невиновный';
+    desc='Вы назвали '+sus(acc.who).n+'. Протокол подписан, человек задержан. Настоящий убийца — '+cul.n+' — в это время давал показания как свидетель.';
+  }else if(chain===3){
+    key='convict';vc='#5fbf7a';title='Приговор';
+    desc='Средство, возможность, мотив — три звена замкнулись. '+cul.n+' не смог(ла) объяснить ни одно. Дело передано в суд без единой дыры.';
+  }else if(chain===2){
+    key='closed';vc='#e0a33c';title='Дело закрыто';
+    desc='Виновный назван верно, но одно звено цепи осталось недоказанным.Enough для обвинения, но адвокат будет работать именно там.';
+    desc=desc.replace('Enough','Достаточно');
+  }else{
+    key='walked';vc='#c2622c';title='Виновен, но не доказано';
+    desc='Вы знали, кто это. Знание — не доказательство. '+cul.n+' вышел(ла) из кабинета через сорок минут, вежливо поблагодарив за беседу.';
+  }
+  /* надстройки */
+  var bonus=[];
+  if(accRight)bonus.push('Сообщник назван верно: '+sus(T.acc).n+'. Второй удар не состоится.');
+  else if(T.acc&&key!=='wrong'&&acc)bonus.push('Сообщник не назван. '+sus(T.acc).n+' остался(ась) в тени — и через месяц в этом городе случится похожее.');
+  if(cleared>=5)bonus.push('Все пять тайн раскрыты и объяснены. Город остался без секретов — редкий исход.');
+  else if(cleared>=3)bonus.push(cleared+' невиновных избавлены от подозрений благодаря найденным разоблачениям.');
+  if(pr.ev>=Math.floor(pr.evTotal*.8))bonus.push('Собрано '+pr.ev+' из '+pr.evTotal+' материалов дела — почти полный объём.');
+  var score=0;
+  if(right)score+=40;
+  score+=chain*15;
+  if(accRight)score+=15;
+  score+=cleared*4;
+  score+=Math.floor(C.left/6);
+  if(!acc)score=Math.floor(score*.2);
+  var xp=Math.round(score*(C.diff==='hard'?1.5:C.diff==='soft'?.7:1));
+  /* эпилоги */
+  var epis=[];
+  C.suspects.forEach(function(s){
+    var t;
+    if(s.idx===cul.idx){
+      if(key==='convict')t='Признан(а) виновным(ой). Мотив — '+T.motN.toLowerCase()+'. Приговор реальный.';
+      else if(key==='closed')t='Обвинение предъявлено. Дело уйдёт в суд с одной слабой точкой.';
+      else if(key==='walked')t='Отпущен(а). Улики не сложились в цепь. Уехал(а) из города в тот же месяц.';
+      else if(key==='wrong')t='Остался(ась) свидетелем по делу. Дал(а) показания спокойно и подробно.';
+      else if(key==='fled')t='Пропал(а) без вести. Объявлен(а) в розыск — поздно.';
+      else t='Не назван(а). Дело закрыто без виновного.';
+    }else if(acc&&acc.who===s.id){
+      t='Задержан(а) по вашему обвинению. '+ (s.cleared?'Его тайна была раскрыта вами — и она не про убийство. Ошибка признана.':'Оснований не было. Через неделю его отпустили, через месяц он уехал.');
+    }else if(s.cleared){
+      t='Подозрения сняты при жизни дела. Тайна раскрыта и объяснена: '+s.secret.n.toLowerCase()+'. Вернулся(ась) к обычной жизни.';
+    }else if(T.acc&&s.idx===sus(T.acc).idx){
+      t=accRight?'Признан(а) соучастником. Показал(а), как всё было.' : 'Остался(ась) вне дела. Помощь убийце так и не была доказана.';
+    }else{
+      t='Остался(ась) под подозрением до конца. Свою тайну так и не объяснил(а) — и это осталось на нём/ней.';
+    }
+    epis.push({n:s.n,r:s.r,t:t});
+  });
+  return{key:key,vc:vc,title:title,desc:desc,bonus:bonus,score:score,xp:xp,
+    chain:chain,pm:pm,po:po,pt:pt2,right:!!right,accRight:!!accRight,
+    cleared:cleared,epis:epis,fled:!!fled,at:Date.now()};
+}
+function submitAccusation(acc){
+  var C=A.C;
+  C.accused=acc;
+  C.ending=makeEnding(acc,false);
+  recordCase();
+  A.screen='end';
+  closeSheet();
+  clearSave();
+  sfx('stamp');vib([40,60,40]);
+  render();
+  setTimeout(function(){
+    var k=C.ending.key;
+    if(k==='convict'){sfx('win');rain(['#5fbf7a','#e0a33c','#ece4d3','#f5c869'],110);}
+    else if(k==='closed'||k==='walked'){sfx('half');rain(['#e0a33c','#c2622c','#ece4d3'],60);}
+    else{sfx('lose');rain(['#6d7787','#d8434f','#3d4f66'],70);}
+  },520);
+}
+function recordCase(){
+  var C=A.C,e=C.ending,c=career();
+  if(c.last===C.cid)return;
+  var before=rankOf(c.xp);
+  c.last=C.cid;c.xp+=e.xp;c.cases++;
+  if(e.right&&e.chain>=2)c.solved++;
+  if(e.key==='convict')c.perfect++;
+  c.best=Math.max(c.best,e.score);
+  var s=c.sets[C.setId]||{p:0,w:0,f:0};
+  s.p++;if(e.right&&e.chain>=2)s.w++;if(e.key==='convict')s.f++;
+  c.sets[C.setId]=s;
+  c.arch.unshift({no:C.no,set:C.setId,diff:C.diff,key:e.key,title:e.title,score:e.score,
+    who:C.truth.culN,date:Date.now()});
+  c.arch=c.arch.slice(0,30);
+  saveCareer();
+  var after=rankOf(c.xp);
+  if(after.i>before.i){
+    setTimeout(function(){toast('Новое звание: '+after.n,'ok');sfx('win');rain(['#e0a33c','#f5c869','#c2622c'],70);},1400);
+  }
+}
+
+/* ═══════════ РЕНДЕР ═══════════ */
+function bar(showCase){
+  var C=A.C;
+  var h='<div class="bar"><div class="mark">'+emblem(26)+'<span class="nm">РАЗВИЛ<i>К</i>А</span></div>';
+  if(showCase&&C){
+    var cd=contradictions().length;
+    h+='<button class="ib'+(cd?' hot':'')+'" data-a="file">'+ic('folder',17)+'Дело'+(cd?'<span class="pip">'+cd+'</span>':'')+'</button>';
+  }
+  h+='<button class="ib" id="snd" data-a="snd" aria-label="Звук">'+ic(AU.on?'snd':'mute',18)+'</button>';
+  h+='<button class="ib" data-a="rules" aria-label="Правила">'+ic('book',17)+'</button>';
+  h+='</div>';
+  return h;
+}
+function clockHTML(){
+  var C=A.C,low=C.left<=20;
+  var pct=Math.round(C.left/C.budget*100);
+  return '<div class="clock'+(low?' low':'')+'">'
+    +'<div><div class="lbl">Осталось</div><div class="digits">'+C.left+'ч</div></div>'
+    +'<div class="grow"><div class="lbl" style="margin-bottom:5px">'+esc(C.no)+' · '+esc(SETTINGS[C.setId].n)+'</div>'
+    +'<div class="track"><i style="width:'+pct+'%"></i></div></div>'
+    +'</div>';
+}
+function evCard(e,tap,sel,extra){
+  var col=evColor(e);
+  var lab=e.needsLab&&e.analyzed&&e.lab
+    ?'<div class="lab"><b>ЗАКЛЮЧЕНИЕ ЭКСПЕРТА</b>'+esc(e.lab)+'</div>'
+    :(e.needsLab&&!e.analyzed?'<div class="lab" style="background:rgba(224,163,60,.07);border-left-color:#e0a33c;color:#e5d3ad"><b style="color:#e0a33c">ТРЕБУЕТСЯ ЭКСПЕРТИЗА</b>Пока это просто предмет. Отправьте в лабораторию — 4 часа.</div>':'');
+  var tags='<span class="tag">'+esc(evKindLabel(e))+'</span>';
+  if(e.clears&&e.found)tags+='<span class="tag g">разоблачение</span>';
+  if(e.neutral&&e.found)tags+='<span class="tag g">снимает мотив</span>';
+  if(canUseAsProof(e)&&(A.C.proofs.means.indexOf(e.id)>=0||A.C.proofs.opp.indexOf(e.id)>=0||A.C.proofs.mot.indexOf(e.id)>=0))
+    tags+='<span class="tag a">пригодно как доказательство</span>';
+  return '<div class="ev'+(tap?' tap':'')+(sel?' sel':'')+(e.k==='test'?' q':'')+'" id="ev-'+e.id+'" style="'+cv(col)+'"'
+    +(tap?' data-a="evpick" data-id="'+e.id+'" role="button" tabindex="0"':'')+'>'
+    +'<div class="head"><span class="ico">'+ic(e.ico||'file',20)+'</span>'
+    +'<div class="grow"><div class="ttl">'+esc(e.n)+'</div><div class="src">'+esc(e.src)+(e.loc>=0?' · '+esc(A.C.locs[e.loc].n):'')+'</div></div></div>'
+    +'<div class="body">'+esc(e.txt)+'</div>'+lab
+    +'<div class="foot">'+tags+(extra||'')+'</div></div>';
+}
+function persCard(s,tap){
+  var cls=s.cleared?'clear':(s.susp===2?'s2':(s.susp===1?'s1':''));
+  var asked=Object.keys(s.asked).length;
+  var tags='';
+  if(s.cleared)tags+='<span class="tag g">'+ic('check',10)+'подозрения сняты</span>';
+  else if(s.susp===2)tags+='<span class="tag b">главный подозреваемый</span>';
+  else if(s.susp===1)tags+='<span class="tag a">под вопросом</span>';
+  if(asked)tags+='<span class="tag">'+asked+'/'+A.C.qs.length+' вопросов</span>';
+  else tags+='<span class="tag c">не допрошен</span>';
+  if(s.cracked&&!s.cleared)tags+='<span class="tag b">дал трещину</span>';
+  if(s.met)tags+='<span class="tag v">'+esc(s.relation)+'</span>';
+  return '<button class="pers '+cls+'"'+(tap?' data-a="person" data-id="'+s.id+'"':'')+'>'
+    +face(s.n,62,s.cleared)
+    +'<div class="grow"><div class="nm">'+esc(s.n)+'</div><div class="rl">'+esc(s.r)+'</div>'
+    +'<div class="bio">'+esc(s.bio)+'</div><div class="meta">'+tags+'</div></div></button>';
+}
+function actRow(a){
+  return '<button class="act'+(a.done?' done':'')+'" style="'+av(a.col||'#e0a33c')+'" data-a="'+a.act+'"'
+    +(a.id!=null?' data-id="'+a.id+'"':'')+(a.i!=null?' data-i="'+a.i+'"':'')+(a.disabled?' disabled':'')+'>'
+    +'<span class="ai">'+ic(a.ico,19)+'</span>'
+    +'<span class="grow"><span class="at">'+esc(a.t)+'</span><span class="ad">'+esc(a.d)+'</span></span>'
+    +'<span class="cost">'+(a.done?'готово':a.cost+'ч')+'</span></button>';
+}
+
+/* ---------- экраны ---------- */
+function vMenu(){
+  var save=loadGame();
+  var c=career(),rk=rankOf(c.xp);
+  var h=bar(false)+'<div class="view">';
+  h+='<div class="hero">'+emblem(78)+'<h1>РАЗВИЛКА</h1>'
+    +'<div class="sub">Отдел тяжких преступлений</div>'
+    +'<p>Настоящее расследование: шесть подозреваемых, у каждого своя тайна, часы следствия на исходе. Обвинение нужно доказать — средством, возможностью и мотивом.</p></div>';
+  if(save){
+    h+='<button class="bigcard" data-a="continue" style="--bc:#5fbf7a;--bcbg:'+alpha('#5fbf7a',.12)+';--bc45:'+alpha('#5fbf7a',.45)+'">'
+      +'<span class="ic">'+ic('save',25)+'</span><span><h3>Продолжить дело '+esc(save.no)+'</h3>'
+      +'<p>'+esc(SETTINGS[save.setId].n)+' · осталось '+hrs(save.left)+' · найдено '+save.ev.filter(function(e){return e.found;}).length+' улик</p></span></button>';
+  }
+  h+='<button class="bigcard" data-a="newcase" style="--bc:#e0a33c;--bcbg:'+alpha('#e0a33c',.12)+';--bc45:'+alpha('#e0a33c',.45)+'">'
+    +'<span class="ic">'+ic('lens',25)+'</span><span><h3>Новое дело</h3>'
+    +'<p>Шесть мест, шесть подозреваемых, случайная истина. Партия на 40–60 минут вдумчивой работы.</p></span></button>';
+  h+='<div class="card"><div class="row" style="margin-bottom:10px"><span style="color:#e0a33c">'+ic('star',20)+'</span>'
+    +'<div class="grow"><div class="ser" style="font-size:17px;font-weight:700">'+esc(rk.n)+'</div>'
+    +'<div class="dim">'+c.xp+' опыта'+(rk.next?' · до «'+esc(rk.next)+'» '+rk.left:' · высшее звание')+'</div></div>'
+    +'<button class="ib" data-a="archive" aria-label="Архив">'+ic('folder',17)+'</button></div>'
+    +'<div class="clock" style="padding:0;border:none;background:none"><div class="grow"><div class="track"><i style="width:'+rk.pct+'%"></i></div></div></div>'
+    +'<div class="row wrap" style="gap:6px;margin-top:11px"><span class="tag">дел: '+c.cases+'</span>'
+    +'<span class="tag g">раскрыто: '+c.solved+'</span><span class="tag a">приговоров: '+c.perfect+'</span>'
+    +'<span class="tag">лучший счёт: '+c.best+'</span></div></div>';
+  h+='<div class="row wrap" style="justify-content:center;gap:7px">'
+    +'<span class="tag">6 дел</span><span class="tag">7 вопросов каждому</span><span class="tag">30+ улик</span><span class="tag">8 финалов</span></div>';
+  h+='<button class="link" data-a="rules">Как вести следствие — прочитать перед первым делом</button>';
+  h+='</div>';
+  return h;
+}
+function vSetup(){
+  var sid=A.setId||'hotel',diff=A.setDiff||'norm',seed=A.setSeed||mkSeed();
+  A.setId=sid;A.setDiff=diff;A.setSeed=seed;
+  var st=SETTINGS[sid];
+  var h=bar(false)+'<div class="view">';
+  h+='<div class="row"><button class="ib" data-a="menu">'+ic('back',18)+'</button><h2 style="font-size:21px">Новое дело</h2></div>';
+  h+='<div class="scene">'+scene(st.scene)+'<div class="cap"><div><h3>'+st.ico+' '+esc(st.n)+'</h3><div class="s">'+esc(st.tag)+'</div></div></div></div>';
+  h+='<div class="stack">'+SETIDS.map(function(id){
+    var s=SETTINGS[id],on=id===sid;
+    return '<button class="pick'+(on?' on':'')+'" data-a="setpick" data-id="'+id+'">'
+      +'<span class="th">'+scene(s.scene)+'</span>'
+      +'<span class="grow"><span class="t">'+s.ico+' '+esc(s.n)+'</span><br><span class="d">'+esc(s.tag)+'</span></span>'
+      +'<span class="rd">'+(on?ic('check',12):'')+'</span></button>';
+  }).join('')+'</div>';
+  h+='<div class="card stack"><div class="fld"><label>Сложность</label><div class="seg">'
+    +DIFFIDS.map(function(d){return '<button class="'+(d===diff?'on':'')+'" data-a="diffpick" data-id="'+d+'">'+DIFFS[d].n+'<small>'+DIFFS[d].s+'</small></button>';}).join('')
+    +'</div></div><p class="dim">'+esc(DIFFS[diff].d)+'</p>';
+  h+='<div class="fld"><label>Код дела · истина привязана к нему</label><div class="row">'
+    +'<input id="seedIn" class="mono" maxlength="8" value="'+esc(seed)+'" style="flex:1;min-width:0;padding:12px;border-radius:12px;border:1px solid var(--edge);background:var(--desk);font-size:18px;letter-spacing:.2em;text-transform:uppercase">'
+    +'<button class="ib" data-a="reseed" aria-label="Другой код">'+ic('dice',18)+'</button>'
+    +'<button class="ib" data-a="copyseed" aria-label="Копировать">'+ic('copy',17)+'</button></div></div>'
+    +'<p class="dim">Другой код — другой убийца, метод, мотив и все тайны. Один код у двух команд — одинаковое дело для соревнования.</p></div>';
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">ЖЕРТВА</div>'
+    +'<div class="row">'+face(st.victim.n,58,true)+'<div class="grow"><div class="ser" style="font-size:16px;font-weight:700">'+esc(st.victim.n)+'</div>'
+    +'<div class="mut" style="font-size:12px;color:#e0a33c">'+esc(st.victim.r)+'</div>'
+    +'<div class="dim" style="margin-top:5px">'+esc(st.victim.bio)+'</div></div></div></div>';
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:11px">КРУГ ПОДОЗРЕВАЕМЫХ</div>'
+    +st.sus.map(function(s){
+      return '<div class="row" style="padding:7px 0;border-top:1px dashed var(--edge)">'+face(s.n,40)
+        +'<div class="grow"><div style="font-weight:700;font-size:13.5px">'+esc(s.n)+'</div>'
+        +'<div class="dim" style="font-size:11.5px">'+esc(s.r)+'</div></div></div>';
+    }).join('')+'</div>';
+  h+='<div style="position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,10,16,.95) 32%)">'
+    +'<button class="btn btn-a" data-a="start">'+ic('lens',19)+'Открыть дело '+esc(seed)+'</button></div>';
+  h+='</div>';
+  return h;
+}
+function vBrief(){
+  var C=A.C,st=SETTINGS[C.setId];
+  var h=bar(true)+'<div class="view">'+clockHTML();
+  h+='<div class="scene">'+scene(st.scene)+'<div class="cap"><div><h3>Дело '+esc(C.no)+'</h3><div class="s">'+esc(st.n)+'</div></div><span class="seal">'+esc(DIFFS[C.diff].n)+'</span></div></div>';
+  h+='<div class="card"><p class="ser" style="font-size:15.5px;line-height:1.65">'+esc(C.intro)+'</p></div>';
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">ПЕРВИЧНЫЕ ДАННЫЕ</div>'
+    +C.initial.map(function(t){return '<div class="row" style="align-items:flex-start;padding:7px 0"><span style="color:#e0a33c;flex:none;margin-top:2px">'+ic('check',15)+'</span><span style="font-size:13.5px;line-height:1.55">'+esc(t)+'</span></div>';}).join('')+'</div>';
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:11px">ШЕСТЕРО ПОДОЗРЕВАЕМЫХ · ЗАПОМНИТЕ ИХ</div>'
+    +C.suspects.map(function(s){
+      return '<div style="padding:11px 0;border-top:1px dashed var(--edge)"><div class="row">'+face(s.n,52)
+        +'<div class="grow"><div class="ser" style="font-size:15.5px;font-weight:700">'+esc(s.n)+'</div>'
+        +'<div style="font-size:11.5px;color:#e0a33c">'+esc(s.r)+'</div></div></div>'
+        +'<div class="mut" style="margin-top:7px;font-size:13px;line-height:1.55">'+esc(s.bio)+'</div></div>';
+    }).join('')+'</div>';
+  h+='<div class="card" style="border-color:rgba(224,163,60,.4)"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:9px;color:#e0a33c">КАК ВЕСТИ ДЕЛО</div>'
+    +'<p class="mut" style="line-height:1.6">У вас '+hrs(C.budget)+'. Осмотр места — 3ч, тщательный обыск — 6ч, вопрос — 2–3ч, экспертиза — 4ч. Всего не успеть: выбирайте, обсуждайте, делите работу.</p>'
+    +'<p class="mut" style="line-height:1.6;margin-top:9px">Обвинение требует <b style="color:#e0a33c">три доказательства</b>: чем, как попал на место, зачем. Угадывание имени не работает.</p></div>';
+  h+='<div style="position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,10,16,.95) 32%)">'
+    +'<button class="btn btn-a" data-a="begin">'+ic('lens',19)+'Начать следствие</button></div>';
+  h+='</div>';
+  return h;
+}
+function vHub(){
+  var C=A.C,pr=progress(),cd=contradictions();
+  var h=bar(true)+'<div class="view">'+clockHTML();
+  if(C.warned)h+='<div class="card tight" style="border-color:rgba(216,67,79,.5);background:linear-gradient(120deg,rgba(216,67,79,.13),var(--surf))"><div class="row"><span style="color:#d8434f">'+ic('alert',19)+'</span><span class="mut" style="font-size:12.5px;line-height:1.5">Подозреваемый настороже. Если время выйдет — он исчезнет.</span></div></div>';
+  if(cd.length)h+='<button class="card tight" data-a="file" data-tab="contra" style="border-color:rgba(216,67,79,.5);background:linear-gradient(120deg,rgba(216,67,79,.12),var(--surf));width:100%;text-align:left"><div class="row"><span style="color:#d8434f">'+ic('alert',20)+'</span><div class="grow"><div style="font-weight:700;font-size:13.5px;color:#ff7079">'+cd.length+' '+plural(cd.length,['противоречие','противоречия','противоречий'])+' ждёт разбора</div><div class="dim">Кто-то лжёт. Откройте дело → Противоречия.</div></div>'+ic('back',16)+'</div></button>';
+  h+='<div class="tabs">'
+    +'<button class="'+(A.tab==='people'?'on':'')+'" data-a="tab" data-id="people">'+ic('people',14)+'Люди<span class="n">'+C.suspects.filter(function(s){return Object.keys(s.asked).length;}).length+'/6</span></button>'
+    +'<button class="'+(A.tab==='places'?'on':'')+'" data-a="tab" data-id="places">'+ic('pin',14)+'Места<span class="n">'+C.locs.filter(function(l){return l.visits;}).length+'/8</span></button>'
+    +'<button class="'+(A.tab==='last'?'on':'')+'" data-a="tab" data-id="last">'+ic('note',14)+'Находки<span class="n">'+pr.ev+'</span></button>'
+    +'</div>';
+  if(A.tab==='people'){
+    h+='<div>'+C.suspects.map(function(s){return persCard(s,true);}).join('')+'</div>';
+    h+='<p class="dim ctr">Допрос — 2–3 часа за вопрос. Предъявление улики — 2 часа. Отметки «под вопросом» ставьте сами: это ваш рабочий инструмент, не подсказка.</p>';
+  }else if(A.tab==='places'){
+    h+='<div>'+C.locs.map(function(l){
+      var here=C.ev.filter(function(e){return e.loc===l.idx;});
+      var f=here.filter(function(e){return e.found;}).length;
+      var col=l.idx===C.truth.place?'#d8434f':'#3fb6d8';
+      return '<button class="act" style="'+av(col)+'" data-a="loc" data-i="'+l.idx+'">'
+        +'<span class="ai">'+ic(l.idx===C.truth.place?'alert':'door',19)+'</span>'
+        +'<span class="grow"><span class="at">'+esc(l.n)+(l.idx===C.truth.place?' · место преступления':'')+'</span>'
+        +'<span class="ad">'+esc(l.d)+'</span></span>'
+        +'<span class="cost">'+f+'/'+here.length+'</span></button>';
+    }).join('')+'</div>';
+    h+=actRow({act:'timeline',ico:'clock',t:'Восстановить хронологию',d:'Уточнить один неизвестный интервал той ночи. Помогает ловить алиби.',cost:3,col:'#a678e8'});
+  }else{
+    var f=found();
+    if(!f.length)h+='<div class="card ctr"><p class="mut">Пока ничего не найдено. Начните с места преступления — осмотр стоит 3 часа.</p></div>';
+    else h+='<div>'+f.slice().reverse().map(function(e){return evCard(e,false,false);}).join('')+'</div>';
+  }
+  h+='<div style="position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,10,16,.95) 32%);display:flex;flex-direction:column;gap:8px">'
+    +'<button class="btn btn-b" data-a="accuse">'+ic('gavel',19)+'Выдвинуть обвинение</button>'
+    +'<div class="dim ctr">Найдено '+pr.ev+' из '+pr.evTotal+' материалов · снято подозрений: '+pr.clear+' из 5</div></div>';
+  h+='</div>';
+  return h;
+}
+function vLoc(){
+  var C=A.C,l=locByIdx(A.locIdx);
+  var here=C.ev.filter(function(e){return e.loc===l.idx;});
+  var f=here.filter(function(e){return e.found;});
+  var un=here.filter(function(e){return !e.found;});
+  var col=l.idx===C.truth.place?'#d8434f':'#3fb6d8';
+  var h=bar(true)+'<div class="view">'+clockHTML();
+  h+='<div class="row"><button class="ib" data-a="hub">'+ic('back',18)+'</button><h2 style="font-size:19px" class="grow">'+esc(l.n)+'</h2>'
+    +(l.idx===C.truth.place?'<span class="tag b">место преступления</span>':'')+'</div>';
+  h+='<div class="card"><p class="mut" style="line-height:1.6">'+esc(l.d)+'</p>'
+    +'<div class="row wrap" style="gap:6px;margin-top:11px"><span class="tag">'+(l.visits?'осмотров: '+l.visits:'не осматривалось')+'</span>'
+    +'<span class="tag a">найдено '+f.length+' из '+here.length+'</span></div></div>';
+  h+='<div>';
+  h+=actRow({act:'search',id:l.idx,i:1,ico:'lens',t:'Осмотреть помещение',d:'Поверхностный осмотр: 1–2 видимых предмета. Дёшево и быстро.',cost:3,col:col,disabled:!un.length});
+  h+=actRow({act:'search',id:l.idx,i:2,ico:'eye',t:'Тщательный обыск',d:'Вскрыть, отодвинуть, поднять. До трёх находок, включая спрятанное.',cost:6,col:'#e0a33c',disabled:!un.length});
+  if(l.idx===7||l.idx===3)h+=actRow({act:'records',id:l.idx,ico:'file',t:'Проверить документы',d:'Прицельно искать бумаги: motive, счета, приказы. До двух документов.',cost:4,col:'#3fb6d8',disabled:!un.length});
+  h+='</div>';
+  if(!un.length)h+='<div class="card ctr"><p class="mut">Место отработано полностью. Больше здесь ничего нет.</p></div>';
+  var labs=f.filter(function(e){return e.needsLab&&!e.analyzed;});
+  if(labs.length){
+    h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px;color:#3fb6d8">ОТПРАВИТЬ В ЛАБОРАТОРИЮ</div>'
+      +labs.map(function(e){return actRow({act:'lab',id:e.id,ico:'flask',t:e.n,d:'Без экспертизы этот предмет ничего не доказывает.',cost:4,col:'#3fb6d8'});}).join('')+'</div>';
+  }
+  if(f.length)h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">НАЙДЕНО ЗДЕСЬ</div>'
+    +f.map(function(e){return evCard(e,false,false);}).join('')+'</div>';
+  h+='<div style="height:8px"></div></div>';
+  return h;
+}
+function vPerson(){
+  var C=A.C,s=sus(A.perId);
+  var h=bar(true)+'<div class="view">'+clockHTML();
+  h+='<div class="row"><button class="ib" data-a="hub">'+ic('back',18)+'</button><h2 style="font-size:19px" class="grow">Допрос</h2></div>';
+  h+='<div class="card"><div class="row">'+face(s.n,76,s.cleared)
+    +'<div class="grow"><div class="ser" style="font-size:19px;font-weight:700">'+esc(s.n)+'</div>'
+    +'<div style="font-size:12px;color:#e0a33c">'+esc(s.r)+'</div>'
+    +'<div class="mut" style="font-size:12.5px;margin-top:6px;line-height:1.5">'+esc(s.bio)+'</div></div></div>';
+  if(s.met)h+='<div class="note" style="margin-top:12px"><b style="font-family:var(--serif)">Связь с жертвой:</b> '+esc(s.relation)+' — '+esc(s.relText)+'.</div>';
+  if(s.motiveNote&&s.asked.who)h+='<div class="note" style="margin-top:8px"><b style="font-family:var(--serif)">Возможный мотив (со слов круга):</b> '+esc(s.motiveNote)+'.</div>';
+  h+='<div class="row wrap" style="gap:6px;margin-top:12px">'
+    +['не подозреваю','под вопросом','главный'].map(function(t,i){
+      return '<button class="ib'+(s.susp===i?' hot':'')+'" data-a="susp" data-id="'+s.id+'" data-i="'+i+'" style="height:34px;font-size:11.5px">'+t+'</button>';
+    }).join('')+'</div>';
+  if(s.cleared)h+='<div class="card tight" style="margin-top:11px;border-color:rgba(95,191,122,.45)"><div class="row"><span style="color:#5fbf7a">'+ic('check',18)+'</span><span class="mut" style="font-size:12.5px">Тайна раскрыта и объяснена. Алиби проверено. Этот человек не убийца.</span></div></div>';
+  h+='</div>';
+  h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">ВОПРОСЫ</div>'
+    +C.qs.map(function(q){
+      return actRow({act:'ask',id:s.id+'|'+q.id,ico:q.ico,t:q.q,
+        d:s.asked[q.id]?'Ответ записан в показаниях.':'Ответ будет записан дословно и приобщён к делу.',
+        cost:q.cost,col:'#a678e8',done:!!s.asked[q.id],disabled:!!s.asked[q.id]});
+    }).join('')+'</div>';
+  var usable=found().filter(canUseAsProof);
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:9px;color:#d8434f">ПРЕДЪЯВИТЬ УЛИКУ</div>'
+    +'<p class="mut" style="line-height:1.55;margin-bottom:11px">Самый сильный ход. Если улика противоречит его словам — он даст трещину. Если нет — потеряете 2 часа.</p>'
+    +'<button class="btn btn-b" data-a="confront" data-id="'+s.id+'"'+(usable.length?'':' disabled')+'>'+ic('alert',18)+'Выбрать улику ('+usable.length+')</button></div>';
+  if(s.statements.length){
+    h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">ПРОТОКОЛ ДОПРОСА</div>'
+      +s.statements.map(function(st){
+        return '<div class="card tight" style="margin-bottom:9px"><div class="dim" style="font-size:11.5px;margin-bottom:6px">'+esc(st.q)+'</div>'
+          +'<div style="font-size:13.5px;line-height:1.65;white-space:pre-line;color:#d5dae2">'+esc(st.a)+'</div></div>';
+      }).join('')+'</div>';
+  }
+  h+='<div style="height:8px"></div></div>';
+  return h;
+}
+function vAccuse(){
+  var C=A.C,sel=A.accSel||{who:null,means:null,opp:null,mot:null,acc:null};
+  A.accSel=sel;
+  var usable=found().filter(canUseAsProof);
+  var h=bar(true)+'<div class="view">'+clockHTML();
+  h+='<div class="row"><button class="ib" data-a="hub">'+ic('back',18)+'</button><h2 style="font-size:19px" class="grow">Обвинение</h2></div>';
+  h+='<div class="card" style="border-color:rgba(216,67,79,.4)"><p class="mut" style="line-height:1.6">Назовите убийцу и подкрепите обвинение тремя доказательствами. Без цепи «чем · как попал · зачем» дело развалится в суде — даже если вы угадали имя.</p></div>';
+  h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">1 · КТО</div>'
+    +C.suspects.map(function(s){
+      var on=sel.who===s.id;
+      return '<button class="pers'+(on?' s2':'')+'" data-a="accwho" data-id="'+s.id+'" style="'+(on?'border-color:#d8434f;box-shadow:0 0 0 1px #d8434f':'')+'">'
+        +face(s.n,52,s.cleared)+'<div class="grow"><div class="nm">'+esc(s.n)+'</div><div class="rl">'+esc(s.r)+'</div>'
+        +(s.cleared?'<div class="meta"><span class="tag g">подозрения сняты</span></div>':'')+'</div>'
+        +(on?'<span style="color:#d8434f;flex:none">'+ic('check',20)+'</span>':'')+'</button>';
+    }).join('')+'</div>';
+  var slots=[
+    {k:'means',n:'2 · ЧЕМ — средство',d:'Улика, связывающая обвиняемого с орудием или способом.',ico:'knife'},
+    {k:'opp',n:'3 · КАК ПОПАЛ — возможность',d:'Улика, ломающая алиби: след на месте или свидетельство.',ico:'print'},
+    {k:'mot',n:'4 · ЗАЧЕМ — мотив',d:'Документ, устанавливающий настоящий мотив обвиняемого.',ico:'file'}
+  ];
+  slots.forEach(function(sl){
+    var e=sel[sl.k]?evById(sel[sl.k]):null;
+    h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:6px">'+sl.n+'</div>'
+      +'<p class="dim" style="margin-bottom:10px">'+sl.d+'</p>';
+    if(e)h+=evCard(e,false,true,'<button class="ib" data-a="accslot" data-id="'+sl.k+'" style="height:32px;font-size:11px">заменить</button>');
+    else h+='<button class="btn btn-g" data-a="accslot" data-id="'+sl.k+'"'+(usable.length?'':' disabled')+'>'+ic(sl.ico,18)+'Выбрать доказательство</button>';
+    h+='</div>';
+  });
+  h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:6px">5 · СООБЩНИК — если был</div>'
+    +'<p class="dim" style="margin-bottom:10px">Необязательно. Верное имя даёт отдельный исход и очки; неверное — портит дело.</p>'
+    +'<div class="row wrap" style="gap:7px">'
+    +'<button class="ib'+(sel.acc===null?' hot':'')+'" data-a="accacc" data-id="none" style="height:36px;font-size:12px">не было</button>'
+    +C.suspects.filter(function(s){return s.id!==sel.who;}).map(function(s){
+      return '<button class="ib'+(sel.acc===s.id?' hot':'')+'" data-a="accacc" data-id="'+s.id+'" style="height:36px;font-size:12px">'+esc(s.n)+'</button>';
+    }).join('')+'</div></div>';
+  var ready=sel.who&&sel.means&&sel.opp&&sel.mot;
+  h+='<div style="position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,10,16,.95) 32%);display:flex;flex-direction:column;gap:8px">'
+    +'<button class="btn btn-b" data-a="submitacc"'+(ready?'':' disabled')+'>'+ic('gavel',19)+'Подписать обвинение</button>'
+    +(ready?'':'<div class="dim ctr">Нужны имя и три доказательства. Можно обвинить и без полной цепи — но исход будет хуже.</div>'
+      +'<button class="btn btn-g btn-s" data-a="submitweak"'+(sel.who?'':' disabled')+' style="width:100%">Обвинить без полной цепи</button>')
+    +'</div></div>';
+  return h;
+}
+function vEnd(){
+  var C=A.C,e=C.ending,T=C.truth;
+  var cul=sus(T.cul);
+  var h=bar(false)+'<div class="view">';
+  h+='<div class="verdict" style="'+bv(e.vc)+'"><span class="stmp seal'+(e.key==='convict'?'':' red')+'">'+(e.key==='convict'?'ПРИГОВОР':'ДЕЛО ЗАКРЫТО')+'</span>'
+    +'<div class="k">ИСХОД ДЕЛА '+esc(C.no)+'</div><h2>'+esc(e.title)+'</h2><p>'+esc(e.desc)+'</p></div>';
+  h+='<div class="card"><div class="row" style="gap:15px">'
+    +'<div class="ctr" style="flex:none"><div class="mono" style="font-size:30px;font-weight:800;color:'+e.vc+'">'+e.score+'</div><div class="dim mono" style="font-size:9px;letter-spacing:.16em">БАЛЛОВ</div></div>'
+    +'<div class="grow stack" style="gap:6px">'
+    +'<div class="row wrap" style="gap:5px">'
+    +'<span class="tag '+(e.right?'g':'b')+'">виновный: '+(e.right?'верно':'ошибка')+'</span>'
+    +'<span class="tag '+(e.chain===3?'g':e.chain?'a':'b')+'">цепь: '+e.chain+'/3</span>'
+    +'<span class="tag">+'+e.xp+' опыта</span></div>'
+    +'<div class="row wrap" style="gap:5px">'
+    +'<span class="tag '+(e.pm?'g':'')+'">чем</span><span class="tag '+(e.po?'g':'')+'">возможность</span><span class="tag '+(e.pt?'g':'')+'">мотив</span>'
+    +'<span class="tag">снято подозрений: '+e.cleared+'/5</span></div>'
+    +'<div class="dim">Осталось времени: '+hrs(C.left)+' из '+C.budget+'</div>'
+    +'</div></div></div>';
+  if(e.bonus.length)h+='<div class="card stack" style="gap:8px">'
+    +e.bonus.map(function(b){return '<div class="row" style="align-items:flex-start"><span style="color:#e0a33c;flex:none;margin-top:2px">'+ic('star',15)+'</span><span class="mut" style="font-size:13px;line-height:1.55">'+esc(b)+'</span></div>';}).join('')+'</div>';
+  h+='<div class="card" style="border-color:rgba(224,163,60,.45)">'
+    +'<div class="row" style="margin-bottom:13px"><span class="seal">ИСТИНА</span></div>'
+    +'<div class="row">'+face(cul.n,80)+'<div class="grow"><div class="dim mono" style="font-size:9px;letter-spacing:.2em">УБИЙЦА</div>'
+    +'<div class="ser" style="font-size:20px;font-weight:700">'+esc(cul.n)+'</div><div class="mut" style="font-size:12px">'+esc(cul.r)+'</div></div></div>'
+    +endRow('knife','Чем',T.methodN)
+    +endRow('pin','Где',T.placeN)
+    +endRow('clock','Когда',T.time)
+    +endRow('file','Зачем',T.motN)
+    +(T.acc?endRow('people','Сообщник',T.accN+' — '+sus(T.acc).r):endRow('people','Сообщник','не было'))
+    +'</div>';
+  h+='<div class="card"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:11px">ЧТО ВЫ НЕ РАСКРЫЛИ</div>'
+    +C.suspects.filter(function(s){return s.idx!==cul.idx&&s.secret;}).map(function(s){
+      return '<div style="padding:9px 0;border-top:1px dashed var(--edge)">'
+        +'<div class="row"><span style="color:'+(s.cleared?'#5fbf7a':'#6d7787')+';flex:none">'+ic(s.cleared?'check':'eyeoff',15)+'</span>'
+        +'<div class="grow"><div style="font-weight:700;font-size:13.5px">'+esc(s.n)+' — '+esc(s.secret.n)+'</div>'
+        +'<div class="dim" style="font-size:12px;line-height:1.5;margin-top:3px">'+esc(s.secret.find.replace(/\{S\}/g,s.n))+'</div></div></div></div>';
+    }).join('')+'</div>';
+  h+='<div><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">СУДЬБЫ</div>'
+    +e.epis.map(function(x){return '<div class="epi"><span class="r">'+esc(x.r)+'</span><b>'+esc(x.n)+'</b><div style="margin-top:5px;color:#c9cfd8">'+esc(x.t)+'</div></div>';}).join('')+'</div>';
+  h+='<div style="position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,10,16,.95) 32%);display:flex;flex-direction:column;gap:8px">'
+    +'<button class="btn btn-a" data-a="newcase">'+ic('dice',19)+'Новое дело · новая истина</button>'
+    +'<div class="row"><button class="btn btn-g btn-s grow" data-a="replay">'+ic('back',15)+'То же дело '+esc(C.no)+'</button>'
+    +'<button class="btn btn-g btn-s grow" data-a="copyseedend">'+ic('copy',15)+'Код</button></div>'
+    +'<button class="btn btn-g" data-a="menu">'+ic('home',18)+'В меню</button></div>';
+  h+='</div>';
+  return h;
+}
+function endRow(ico,k,v){
+  return '<div class="row" style="align-items:flex-start;padding:9px 0;border-top:1px dashed var(--edge)">'
+    +'<span style="color:#e0a33c;flex:none;margin-top:2px">'+ic(ico,16)+'</span>'
+    +'<div class="grow"><div class="dim mono" style="font-size:9px;letter-spacing:.18em">'+esc(k.toUpperCase())+'</div>'
+    +'<div style="font-size:14px;font-weight:600;line-height:1.4">'+esc(v)+'</div></div></div>';
+}
+function render(){
+  var app=$('#app');if(!app)return;
+  var h;
+  if(A.screen==='menu')h=vMenu();
+  else if(A.screen==='setup')h=vSetup();
+  else if(A.screen==='brief')h=vBrief();
+  else if(A.screen==='hub')h=vHub();
+  else if(A.screen==='loc')h=vLoc();
+  else if(A.screen==='person')h=vPerson();
+  else if(A.screen==='accuse')h=vAccuse();
+  else if(A.screen==='end')h=vEnd();
+  else h=vMenu();
+  var same=A.prev===A.screen;
+  app.innerHTML=h;
+  if(same)app.classList.add('calm');else app.classList.remove('calm');
+  A.prev=A.screen;
+  renderSheet();
+  renderFile();
+}
+
+/* ═══════════ ДЕЛО (полноэкранное досье) ═══════════ */
+function renderFile(){
+  var root=$('#full');
+  if(A.screen!=='file'||!A.C){root.className='full';root.innerHTML='';return;}
+  var C=A.C,pr=progress(),cd=contradictions();
+  var tabs=[
+    {k:'sus',n:'Персонажи',i:'people',c:C.suspects.length},
+    {k:'ev',n:'Улики',i:'folder',c:pr.ev},
+    {k:'test',n:'Показания',i:'talk',c:C.suspects.reduce(function(a,s){return a+s.statements.length;},0)},
+    {k:'contra',n:'Противоречия',i:'alert',c:cd.length},
+    {k:'time',n:'Хронология',i:'clock',c:C.timeline.filter(function(t){return t.known;}).length},
+    {k:'web',n:'Связи',i:'web',c:knownRelations().length},
+    {k:'note',n:'Заметки',i:'note',c:0},
+    {k:'log',n:'Журнал',i:'book',c:C.journal.length}
+  ];
+  var h='<div class="fh"><div class="row" style="margin-bottom:11px">'
+    +'<button class="ib" data-a="closefile">'+ic('back',18)+'</button>'
+    +'<div class="grow"><div class="ser" style="font-size:17px;font-weight:700">Материалы дела '+esc(C.no)+'</div>'
+    +'<div class="dim">'+esc(SETTINGS[C.setId].n)+' · осталось '+hrs(C.left)+'</div></div></div>'
+    +'<div class="tabs">'+tabs.map(function(t){
+      return '<button class="'+(A.fileTab===t.k?'on':'')+'" data-a="filetab" data-id="'+t.k+'">'+ic(t.i,13)+t.n+(t.c?'<span class="n">'+t.c+'</span>':'')+'</button>';
+    }).join('')+'</div></div><div class="fb">';
+  var tab=A.fileTab;
+  if(tab==='sus'){
+    h+=C.suspects.map(function(s){
+      var asked=Object.keys(s.asked).length;
+      return '<div class="card" style="margin-bottom:11px'+(s.cleared?';border-color:rgba(95,191,122,.45)':s.susp===2?';border-color:rgba(216,67,79,.5)':'')+'">'
+        +'<div class="row">'+face(s.n,68,s.cleared)+'<div class="grow">'
+        +'<div class="ser" style="font-size:18px;font-weight:700">'+esc(s.n)+'</div>'
+        +'<div style="font-size:12px;color:#e0a33c">'+esc(s.r)+'</div>'
+        +'<div class="row wrap" style="gap:5px;margin-top:7px">'
+        +(s.cleared?'<span class="tag g">'+ic('check',10)+'исключён</span>':'')
+        +(s.susp===2?'<span class="tag b">главный</span>':s.susp===1?'<span class="tag a">под вопросом</span>':'')
+        +'<span class="tag">'+asked+'/'+C.qs.length+' вопросов</span></div></div></div>'
+        +'<div class="mut" style="margin-top:11px;line-height:1.6">'+esc(s.bio)+'</div>'
+        +(s.met?'<div class="note" style="margin-top:10px"><b class="ser">Связь с жертвой:</b> '+esc(s.relation)+' — '+esc(s.relText)+'.</div>':'<div class="dim" style="margin-top:10px;font-style:italic">Связь с жертвой не установлена. Спросите «Кем вам была жертва?».</div>')
+        +(s.asked.who?'<div class="note" style="margin-top:8px"><b class="ser">Возможный мотив:</b> '+esc(s.motiveNote)+(s.neutralEv&&evById(s.neutralEv).found?' — <b style="color:#5fbf7a">мотив снят документом</b>':'')+'.</div>':'')
+        +(s.asked.alibi?'<div class="note" style="margin-top:8px"><b class="ser">Алиби:</b> '+esc(s.alibi.place)+', '+s.alibi.from+'–'+s.alibi.to+'. '
+          +(s.alibi.witnessName?'Подтвердить может '+esc(s.alibi.witnessName)+'.':'Подтвердить некому.')
+          +(s.alibi.verified?' <b style="color:#5fbf7a">Проверено.</b>':'')+'</div>':'')
+        +(s.cleared&&s.secret?'<div class="note" style="margin-top:8px;border-color:rgba(95,191,122,.4)"><b class="ser" style="color:#5fbf7a">Раскрытая тайна:</b> '+esc(s.secret.n)+'. '+esc(s.secret.conf.replace(/\{S\}/g,s.n))+'</div>':'')
+        +'<div class="row wrap" style="gap:6px;margin-top:11px">'
+        +'<button class="ib" data-a="person" data-id="'+s.id+'" style="height:34px;font-size:11.5px">'+ic('talk',14)+'Допросить</button>'
+        +[0,1,2].map(function(i){
+          return '<button class="ib'+(s.susp===i?' hot':'')+'" data-a="susp" data-id="'+s.id+'" data-i="'+i+'" style="height:34px;font-size:11px">'+['чист','вопрос','главный'][i]+'</button>';
+        }).join('')+'</div></div>';
+    }).join('');
+  }else if(tab==='ev'){
+    var f=found();
+    if(!f.length)h+='<div class="card ctr"><p class="mut">Улик пока нет. Идите на место преступления и осмотрите его.</p></div>';
+    else{
+      h+='<div class="fld" style="margin-bottom:13px"><label>Поиск по названию и тексту</label>'
+        +'<input id="evSearch" placeholder="например: отпечаток, долг, шнур" value="'+esc(A.evQuery||'')+'"></div>';
+      var q=(A.evQuery||'').toLowerCase().trim();
+      var list=q?f.filter(function(e){return (e.n+' '+e.txt+' '+(e.lab||'')).toLowerCase().indexOf(q)>=0;}):f;
+      if(!list.length)h+='<div class="card ctr"><p class="mut">Ничего не найдено по запросу «'+esc(q)+'».</p></div>';
+      else h+='<div class="dim" style="margin-bottom:11px">'+list.length+' '+plural(list.length,['материал','материала','материалов'])+'</div>'
+        +list.slice().reverse().map(function(e){
+          var ex=e.needsLab&&!e.analyzed?'<button class="ib" data-a="lab" data-id="'+e.id+'" style="height:32px;font-size:11px">'+ic('flask',13)+'экспертиза · 4ч</button>':'';
+          return evCard(e,false,false,ex);
+        }).join('');
+    }
+  }else if(tab==='test'){
+    var any=false;
+    C.suspects.forEach(function(s){
+      if(!s.statements.length)return;
+      any=true;
+      h+='<div class="row" style="margin:14px 0 10px">'+face(s.n,40)+'<div class="grow"><div class="ser" style="font-size:15.5px;font-weight:700">'+esc(s.n)+'</div><div class="dim">'+esc(s.r)+'</div></div></div>';
+      h+=s.statements.map(function(st){
+        return '<div class="card tight" style="margin-bottom:9px;border-left:3px solid #a678e8">'
+          +'<div class="dim" style="font-size:11.5px;margin-bottom:6px">'+esc(st.q)+'</div>'
+          +'<div style="font-size:13.5px;line-height:1.65;white-space:pre-line;color:#d5dae2">'+esc(st.a)+'</div></div>';
+      }).join('');
+    });
+    if(!any)h+='<div class="card ctr"><p class="mut">Показаний пока нет. Допросите хотя бы одного человека — все ответы сохраняются здесь дословно.</p></div>';
+  }else if(tab==='contra'){
+    if(!cd.length)h+='<div class="card ctr"><p class="mut">Противоречий пока не видно. Они появляются, когда слова человека сталкиваются с найденной уликой. Допрашивайте об алиби и обыскивайте места.</p></div>';
+    else{
+      h+='<p class="mut" style="margin-bottom:13px;line-height:1.6">Это главный инструмент дела. Каждая пара — чья-то ложь. Ложь невиновного объясняется его тайной; ложь убийцы не объясняется ничем.</p>';
+      h+=cd.map(function(c){
+        return '<div class="contra'+(c.strong?'':'')+'">'
+          +'<div class="ch">'+ic('alert',18)+'<b>'+esc(c.who)+'</b></div>'
+          +'<div class="side"><em>'+esc(c.a.t)+'</em>'+esc(c.a.txt)+'</div>'
+          +'<div class="vs">ПРОТИВ</div>'
+          +'<div class="side"><em>'+esc(c.b.t)+'</em>'+esc(c.b.txt)+'</div>'
+          +'<div class="dim" style="margin-top:10px;line-height:1.55">'+esc(c.hint)+'</div>'
+          +'<div class="row" style="margin-top:11px"><button class="btn btn-b btn-s" data-a="confront" data-id="'+(c.clears||C.truth.cul)+'" style="width:100%">'+ic('alert',15)+'Предъявить этому человеку</button></div>'
+          +'</div>';
+      }).join('');
+    }
+  }else if(tab==='time'){
+    h+='<p class="mut" style="margin-bottom:13px;line-height:1.6">Ночь по интервалам. Неизвестные промежутки уточняются действием «Восстановить хронологию» (3ч) — или выводятся из показаний.</p>';
+    h+='<div class="tl">'+C.timeline.map(function(t){
+      var known=t.known||t.crime;
+      return '<div class="tli '+(t.crime?'crime':known?'known':'unknown')+'">'
+        +'<div class="t">'+esc(t.t)+'</div>'
+        +'<div class="x">'+(known?esc(t.label):'Промежуток не восстановлен. Кто где был — неизвестно.')+'</div></div>';
+    }).join('')+'</div>';
+    h+='<div style="margin-top:14px">'+actRow({act:'timeline',ico:'clock',t:'Восстановить следующий промежуток',d:'Один интервал за три часа.',cost:3,col:'#a678e8'})+'</div>';
+  }else if(tab==='web'){
+    var rel=knownRelations();
+    h+='<p class="mut" style="margin-bottom:13px;line-height:1.6">Связи проявляются после вопроса «Кем вам была жертва?». Красная нить — конфликт, фиолетовая — личное, золотая — деньги.</p>';
+    h+='<div class="card" style="padding:8px">'+webSVG(rel)+'</div>';
+    if(!rel.length)h+='<div class="card ctr" style="margin-top:12px"><p class="mut">Ни одна связь не установлена. Спросите каждого, кем ему была жертва.</p></div>';
+    else h+='<div style="margin-top:13px">'+rel.map(function(r){
+      var k=null;RELKIND.forEach(function(x){if(x.k===r.k)k=x;});
+      return '<div class="card tight" style="margin-bottom:9px;border-left:3px solid '+(k?k.c:'#8a94a3')+'">'
+        +'<div class="row">'+face(r.s.n,36)+'<div class="grow"><div style="font-weight:700;font-size:13.5px">'+esc(r.s.n)+'</div>'
+        +'<div class="dim" style="font-size:11px">'+esc(r.t)+'</div></div></div>'
+        +'<div class="mut" style="margin-top:8px;font-size:13px;line-height:1.55">'+esc(cap(r.txt))+'.</div></div>';
+    }).join('')+'</div>';
+  }else if(tab==='note'){
+    h+='<p class="mut" style="margin-bottom:12px;line-height:1.6">Рабочая доска команды. Пишите версии, имена, нестыковки — это сохраняется вместе с делом.</p>'
+      +'<div class="fld"><label>Версии и заметки</label>'
+      +'<textarea id="noteBox" placeholder="Например: Марта путается во времени. Проверить котельную. У Бруно мотив — долг, но квитанция...">'+esc(C.notes)+'</textarea></div>'
+      +'<div class="dim" style="margin-top:9px">Заметки сохраняются автоматически при вводе.</div>';
+    h+='<div class="card" style="margin-top:14px"><div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:11px">ОТМЕТКИ КОМАНДЫ</div>'
+      +C.suspects.map(function(s){
+        return '<div class="row" style="padding:7px 0;border-top:1px dashed var(--edge)">'+face(s.n,32)
+          +'<div class="grow" style="font-size:13px;font-weight:600">'+esc(s.n)+'</div>'
+          +'<span class="tag '+(s.cleared?'g':s.susp===2?'b':s.susp===1?'a':'')+'">'+(s.cleared?'исключён':['чист','вопрос','главный'][s.susp])+'</span></div>';
+      }).join('')+'</div>';
+  }else{
+    if(!C.journal.length)h+='<div class="card ctr"><p class="mut">Журнал пуст. Каждое действие будет записано здесь.</p></div>';
+    else h+='<div>'+C.journal.map(function(j){
+      var cls=j.kind==='find'?'hi':j.kind==='bad'?'bad':j.kind==='good'?'good':'';
+      return '<div class="jrn '+cls+'"><span class="jt">'+j.left+'ч</span><span class="jx">'+esc(j.text)+'</span></div>';
+    }).join('')+'</div>';
+  }
+  h+='</div>';
+  root.className='full on';
+  root.innerHTML=h;
+}
+function webSVG(rel){
+  var u='w'+(UID++),p=[];
+  var W=480,H=340,cx=W/2,cy=H/2,rad=118;
+  p.push('<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto" role="img" aria-label="Схема связей">');
+  p.push('<defs><radialGradient id="'+u+'c"><stop offset="0" stop-color="#d8434f" stop-opacity=".35"/><stop offset="1" stop-color="#d8434f" stop-opacity="0"/></radialGradient></defs>');
+  p.push(rc(0,0,W,H,'#0b1017',' rx="12"'));
+  for(var i=0;i<40;i++){
+    var gx=(i*97)%W,gy=(i*61)%H;
+    p.push(cr(gx,gy,.7,'#2c3a4c',' opacity=".5"'));
+  }
+  var pos=[];
+  for(var k=0;k<6;k++){
+    var a=-Math.PI/2+k*(Math.PI*2/6);
+    pos.push({x:cx+Math.cos(a)*rad*1.35,y:cy+Math.sin(a)*rad});
+  }
+  rel.forEach(function(r,i){
+    var idx=r.s.idx,P=pos[idx];
+    var kk=null;RELKIND.forEach(function(x){if(x.k===r.k)kk=x;});
+    var col=kk?kk.c:'#8a94a3';
+    var mx=(cx+P.x)/2+(idx%2?16:-16),my=(cy+P.y)/2+(idx%3?10:-12);
+    p.push('<path d="M'+cx+' '+cy+' Q'+mx+' '+my+' '+P.x+' '+P.y+'" fill="none" stroke="'+col+'" stroke-width="2" opacity=".75"/>');
+    p.push('<circle cx="'+mx+'" cy="'+my+'" r="3" fill="'+col+'"/>');
+  });
+  p.push(cr(cx,cy,44,'url(#'+u+'c)'));
+  p.push(cr(cx,cy,25,'#1b2431',' stroke="#d8434f" stroke-width="2"'));
+  p.push('<text x="'+cx+'" y="'+(cy-2)+'" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#ff7079">ЖЕРТВА</text>');
+  p.push('<text x="'+cx+'" y="'+(cy+12)+'" text-anchor="middle" font-family="monospace" font-size="8" fill="#a8b0bd">'+esc(A.C.victim.n.split(' ')[0])+'</text>');
+  pos.forEach(function(P,i){
+    var s=A.C.suspects[i];
+    var known=rel.some(function(r){return r.s.idx===i;});
+    var col=s.cleared?'#5fbf7a':s.susp===2?'#d8434f':known?'#e0a33c':'#3d4f66';
+    p.push(cr(P.x,P.y,20,'#141b25',' stroke="'+col+'" stroke-width="2"'));
+    p.push('<text x="'+P.x+'" y="'+(P.y+4)+'" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="'+col+'">'+esc(s.n.charAt(0))+'</text>');
+    var nm=s.n.split(' ');
+    p.push('<text x="'+P.x+'" y="'+(P.y+34)+'" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#a8b0bd">'+esc(nm[0])+'</text>');
+    p.push('<text x="'+P.x+'" y="'+(P.y+45)+'" text-anchor="middle" font-family="system-ui,sans-serif" font-size="9.5" fill="#a8b0bd">'+esc(nm[1]||'')+'</text>');
+  });
+  p.push('</svg>');
+  return p.join('');
+}
+
+/* ═══════════ ШТОРКИ ═══════════ */
+function closeSheet(){A.sheet=null;renderSheet();}
+function renderSheet(){
+  var root=$('#sheet');if(!root)return;
+  if(!A.sheet){root.className='sheet';root.innerHTML='';return;}
+  var s=A.sheet,title='',body='';
+  if(s.kind==='answer'){
+    var sp=sus(s.sid);
+    title='Показания · '+sp.n;
+    body='<div class="row" style="margin-bottom:13px">'+face(sp.n,52)
+      +'<div class="grow"><div class="ser" style="font-size:16px;font-weight:700">'+esc(sp.n)+'</div>'
+      +'<div class="dim">'+esc(s.q)+'</div></div></div>'
+      +'<div class="card" style="border-left:3px solid #a678e8"><div style="font-size:14.5px;line-height:1.7;white-space:pre-line;color:#d9dee5">'+esc(s.a)+'</div></div>'
+      +(s.newEv?'<div style="margin-top:13px"><div class="dim mono" style="font-size:9.5px;letter-spacing:.2em;margin-bottom:9px;color:#5fbf7a">ПРИОБЩЕНО К ДЕЛУ</div>'+evCard(s.newEv,false,false)+'</div>':'')
+      +'<button class="btn btn-g" data-a="closesheet" style="margin-top:14px">Закрыть протокол</button>';
+  }else if(s.kind==='confront'){
+    var sp2=sus(s.sid),r=s.res;
+    title=r.title;
+    var col=r.kind==='clear'?'#5fbf7a':r.kind==='crack'?'#d8434f':'#e0a33c';
+    body='<div class="row" style="margin-bottom:13px">'+face(sp2.n,52,r.kind==='clear')
+      +'<div class="grow"><div class="ser" style="font-size:16px;font-weight:700">'+esc(sp2.n)+'</div>'
+      +'<div class="dim">предъявление улики</div></div>'
+      +'<span style="color:'+col+'">'+ic(r.kind==='miss'?'x':'alert',22)+'</span></div>'
+      +'<div class="card" style="border-left:3px solid '+col+'"><div style="font-size:14.5px;line-height:1.7;white-space:pre-line;color:#d9dee5">'+esc(r.txt)+'</div></div>'
+      +'<div class="note" style="margin-top:12px">'+esc(r.after)+'</div>'
+      +'<button class="btn btn-g" data-a="closesheet" style="margin-top:14px">Продолжить</button>';
+  }else if(s.kind==='lab'){
+    var e=evById(s.eid);
+    title='Заключение эксперта';
+    body=evCard(e,false,false)+'<button class="btn btn-g" data-a="closesheet" style="margin-top:14px">Приобщить</button>';
+  }else if(s.kind==='pick'){
+    title=s.for==='confront'?'Какую улику предъявить?':'Выберите доказательство';
+    var list=found().filter(canUseAsProof);
+    var hint=s.for==='confront'
+      ?'Выбирайте то, что противоречит словам именно этого человека. Раздел «Противоречия» в деле показывает точные пары.'
+      :'Пригодны только материалы с готовой экспертизой и документы. Выберите одно.';
+    body='<p class="mut" style="margin-bottom:13px;line-height:1.6">'+hint+'</p>';
+    if(!list.length)body+='<div class="card ctr"><p class="mut">Нет пригодных материалов. Вещдоки нужно отправить в лабораторию.</p></div>';
+    else body+=list.map(function(e){return evCard(e,true,false);}).join('');
+    body+='<button class="btn btn-g" data-a="closesheet" style="margin-top:14px">Отмена</button>';
+  }else if(s.kind==='rules'){
+    title='Как вести следствие';
+    body='<div class="stack" style="gap:14px">'
+      +ruleBlock('Что это','Настоящее расследование, а не угадайка. Убийца, метод, место, мотив и все тайны генерируются заново для каждого кода дела. Улика не «даёт очко» — она даёт факт, который вы сопоставляете сами.')
+      +ruleBlock('Время — главный ресурс','У вас '+DIFFS.norm.budget+' часов на стандартной сложности. Осмотр — 3ч, тщательный обыск — 6ч, вопрос — 2–3ч, предъявление улики — 2ч, экспертиза — 4ч, документы — 4ч, хронология — 3ч. Всего не успеть: решайте вместе, что важнее.')
+      +ruleBlock('Люди','Шестеро. У каждого — связь с жертвой, возможный мотив, алиби и своя тайна. Невиновные тоже лгут: они скрывают роман, кражу, подделку, зависимость. Найдите разоблачающий документ и предъявите — человек раскроется и будет исключён. Это половина работы.')
+      +ruleBlock('Убийца','Лжёт об алиби. Его ложь не объясняется ничем невинным и ломается о две независимые вещи: след на месте (после экспертизы) и свидетельство очевидца. Спросите всех «что необычного вы видели» — кто-то видел.')
+      +ruleBlock('Противоречия','Раздел в деле собирается сам: слова человека против найденного факта. Это ваш список задач. Предъявление правильной улики правильному человеку — самый сильный ход в игре.')
+      +ruleBlock('Осторожно','Если предъявить убийце улику, ломающую его алиби, он поймёт, что вы на него смотрите. Не успеете закрыть дело — он исчезнет, и это отдельный плохой финал.')
+      +ruleBlock('Обвинение','Нужно назвать имя и подкрепить тремя доказательствами: ЧЕМ (средство), КАК ПОПАЛ (возможность), ЗАЧЕМ (мотив). Плюс сообщник, если он был. Угаданное имя без цепи — это финал «виновен, но не доказано».')
+      +ruleBlock('Финалы','Приговор · Дело закрыто · Виновен, но не доказано · Обвинён невиновный · Дело в архиве · Убийца исчез — плюс отдельные исходы по сообщнику и раскрытым тайнам, и персональный эпилог для каждого из шести.')
+      +ruleBlock('Вместе','Играйте вслух: один экран, обсуждение, разделение работы. Ставьте отметки «под вопросом», пишите версии в заметках — они сохраняются. Дело можно закрыть и продолжить позже: прогресс сохраняется автоматически.')
+      +'</div><button class="btn btn-a" data-a="closesheet" style="margin-top:16px">Понятно</button>';
+  }else if(s.kind==='archive'){
+    var c=career(),rk=rankOf(c.xp);
+    title='Архив отдела';
+    body='<div class="card" style="margin-bottom:13px"><div class="row"><span style="color:#e0a33c">'+ic('star',18)+'</span>'
+      +'<b class="grow">'+esc(rk.n)+'</b><span class="dim">'+c.xp+' опыта</span></div>'
+      +'<div class="clock" style="padding:0;border:none;background:none;margin-top:10px"><div class="grow"><div class="track"><i style="width:'+rk.pct+'%"></i></div></div></div>'
+      +'<div class="row wrap" style="gap:5px;margin-top:11px"><span class="tag">дел: '+c.cases+'</span><span class="tag g">раскрыто: '+c.solved+'</span><span class="tag a">приговоров: '+c.perfect+'</span></div></div>';
+    body+='<div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin-bottom:10px">МЕСТА</div>';
+    body+=SETIDS.map(function(id){
+      var st=SETTINGS[id],x=c.sets[id]||{p:0,w:0,f:0};
+      return '<div class="row" style="padding:8px 0;border-top:1px dashed var(--edge)"><span class="th" style="flex:none;width:56px;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--edge)">'+scene(st.scene)+'</span>'
+        +'<div class="grow"><div style="font-weight:700;font-size:13px">'+st.ico+' '+esc(st.n)+'</div>'
+        +'<div class="dim" style="font-size:11px">'+x.p+' '+plural(x.p,['дело','дела','дел'])+' · раскрыто '+x.w+' · приговоров '+x.f+'</div></div>'
+        +(x.f?'<span class="tag a">'+ic('star',10)+'идеал</span>':x.w?'<span class="tag g">есть победа</span>':'')+'</div>';
+    }).join('');
+    body+='<div class="dim mono" style="font-size:9.5px;letter-spacing:.22em;margin:16px 0 10px">ПОСЛЕДНИЕ ДЕЛА</div>';
+    if(!c.arch.length)body+='<div class="card ctr"><p class="mut">Архив пуст.</p></div>';
+    else body+=c.arch.map(function(a){
+      var col=a.key==='convict'?'#5fbf7a':a.key==='closed'?'#e0a33c':a.key==='walked'?'#c2622c':'#d8434f';
+      return '<div class="card tight" style="margin-bottom:8px"><div class="row">'
+        +'<span style="flex:none;width:9px;height:9px;border-radius:50%;background:'+col+'"></span>'
+        +'<div class="grow"><div style="font-weight:700;font-size:13px">'+esc(a.title)+'</div>'
+        +'<div class="dim" style="font-size:11px">'+esc(a.no)+' · '+esc(SETTINGS[a.set].n)+' · '+a.score+' баллов · убийца: '+esc(a.who)+'</div></div>'
+        +'<button class="ib" data-a="replayno" data-id="'+esc(a.no)+'" data-set="'+a.set+'" data-diff="'+a.diff+'" aria-label="Повторить">'+ic('back',15)+'</button></div></div>';
+    }).join('');
+    body+='<button class="btn btn-g" data-a="closesheet" style="margin-top:14px">Закрыть</button>';
+  }
+  root.className='sheet on';
+  root.innerHTML='<div class="scrim" data-a="closesheet"></div><div class="box">'
+    +'<div class="sh"><h3>'+esc(title)+'</h3><button class="ib" data-a="closesheet" aria-label="Закрыть">'+ic('x',16)+'</button></div>'
+    +'<div class="sb">'+body+'</div></div>';
+}
+function ruleBlock(t,x){
+  return '<div><div class="mono" style="font-size:10.5px;letter-spacing:.2em;color:#e0a33c;text-transform:uppercase;margin-bottom:5px">'+esc(t)+'</div>'
+    +'<p class="mut" style="line-height:1.65">'+esc(x)+'</p></div>';
+}
+
+/* ═══════════ КЛИПБОРД ═══════════ */
+function copy(txt,msg){
+  var ok=function(){toast(msg,'ok');sfx('tap');};
+  var fb=function(){
+    try{
+      var t=document.createElement('textarea');t.value=txt;t.style.position='fixed';t.style.opacity='0';
+      document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);ok();
+    }catch(e){toast('Скопируйте вручную: '+txt,'info');}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(ok,fb);
+  else fb();
+}
+
+/* ═══════════ СОБЫТИЯ ═══════════ */
+document.addEventListener('click',function(ev){
+  var b=ev.target&&ev.target.closest?ev.target.closest('[data-a]'):null;
+  if(!b||b.disabled)return;
+  var a=b.getAttribute('data-a'),id=b.getAttribute('data-id'),i=b.getAttribute('data-i');
+  if(a==='snd'){setSnd(!AU.on);return;}
+  if(a==='rules'){A.sheet={kind:'rules'};sfx('page');renderSheet();return;}
+  if(a==='archive'){A.sheet={kind:'archive'};sfx('page');renderSheet();return;}
+  if(a==='closesheet'){closeSheet();sfx('tap');return;}
+  if(a==='menu'){stopAll();A.screen='menu';A.C=null;A.sheet=null;render();sfx('tap');return;}
+  if(a==='newcase'){stopAll();A.setSeed=mkSeed();A.screen='setup';A.sheet=null;render();sfx('tap');return;}
+  if(a==='continue'){
+    var c=loadGame();
+    if(!c){toast('Сохранение не найдено.','warn');render();return;}
+    A.C=c;A.screen='hub';A.tab='people';render();sfx('page');
+    toast('Дело '+c.no+' возобновлено. Осталось '+hrs(c.left)+'.','ok');return;
+  }
+  if(a==='setpick'){A.setId=id;sfx('pick');render();return;}
+  if(a==='diffpick'){A.setDiff=id;sfx('pick');render();return;}
+  if(a==='reseed'){A.setSeed=mkSeed();sfx('pick');render();return;}
+  if(a==='copyseed'){copy(A.setSeed,'Код дела скопирован');return;}
+  if(a==='copyseedend'){copy(A.C.seed,'Код дела '+A.C.no+' скопирован');return;}
+  if(a==='replay'){A.setSeed=A.C.seed;A.setId=A.C.setId;A.setDiff=A.C.diff;A.screen='setup';A.C=null;render();sfx('tap');return;}
+  if(a==='replayno'){A.setSeed=String(id).replace('№','');A.setId=b.getAttribute('data-set');A.setDiff=b.getAttribute('data-diff');closeSheet();A.screen='setup';A.C=null;render();return;}
+  if(a==='start'){
+    var inp=$('#seedIn');
+    var sd=clSeed(inp?inp.value:A.setSeed)||mkSeed();
+    A.setSeed=sd;
+    A.C=buildCase(sd,A.setId,A.setDiff);
+    A.screen='brief';A.tab='people';A.fileTab='sus';A.accSel=null;
+    saveGame();render();sfx('open');vib(20);
+    return;
+  }
+  if(a==='begin'){A.screen='hub';sfx('page');render();return;}
+  if(a==='hub'){A.screen='hub';render();sfx('tap');return;}
+  if(a==='tab'){A.tab=id;sfx('pick');render();return;}
+  if(a==='loc'){A.locIdx=+i;A.screen='loc';sfx('page');render();return;}
+  if(a==='person'){A.perId=id;A.screen='person';if(A.screen==='file'){}A.fileOpen=false;$('#full').className='full';A.screen='person';sfx('page');render();return;}
+  if(a==='file'){A.fileTab=b.getAttribute('data-tab')||A.fileTab||'sus';A.screen='file';sfx('page');render();return;}
+  if(a==='closefile'){A.screen='hub';sfx('tap');render();return;}
+  if(a==='filetab'){A.fileTab=id;sfx('pick');renderFile();return;}
+  if(a==='search'){doSearch(+id,+i);return;}
+  if(a==='records'){doRecords(+id);return;}
+  if(a==='timeline'){doTimeline();return;}
+  if(a==='lab'){doLab(id);return;}
+  if(a==='ask'){var pp=String(id).split('|');doAsk(pp[0],pp[1]);return;}
+  if(a==='susp'){setSusp(id,+i);return;}
+  if(a==='confront'){
+    var usable=found().filter(canUseAsProof);
+    if(!usable.length){toast('Нет пригодных улик. Вещдоки нужно отправить в лабораторию.','warn');sfx('err');return;}
+    A.sheet={kind:'pick',for:'confront',sid:id};sfx('page');renderSheet();return;
+  }
+  if(a==='evpick'){
+    if(!A.sheet||A.sheet.kind!=='pick')return;
+    if(A.sheet.for==='confront'){doConfront(A.sheet.sid,id);}
+    else{
+      A.accSel=A.accSel||{who:null,means:null,opp:null,mot:null,acc:null};
+      A.accSel[A.sheet.slot]=id;closeSheet();sfx('pick');render();
+    }
+    return;
+  }
+  if(a==='accuse'){A.screen='accuse';A.accSel=A.accSel||{who:null,means:null,opp:null,mot:null,acc:null};sfx('page');render();return;}
+  if(a==='accwho'){A.accSel.who=id;if(A.accSel.acc===id)A.accSel.acc=null;sfx('pick');render();return;}
+  if(a==='accacc'){A.accSel.acc=id==='none'?null:id;sfx('pick');render();return;}
+  if(a==='accslot'){
+    var usable2=found().filter(canUseAsProof);
+    if(!usable2.length){toast('Нет пригодных доказательств.','warn');sfx('err');return;}
+    A.sheet={kind:'pick',for:'slot',slot:id};sfx('page');renderSheet();return;
+  }
+  if(a==='submitacc'||a==='submitweak'){
+    var s=A.accSel;
+    if(!s.who){toast('Сначала назовите имя.','warn');return;}
+    submitAccusation({who:s.who,means:s.means,opp:s.opp,mot:s.mot,acc:s.acc});
+    return;
+  }
+});
+document.addEventListener('input',function(e){
+  var t=e.target;if(!t||!t.tagName)return;
+  if(t.id==='seedIn'){A.setSeed=clSeed(t.value);t.value=A.setSeed;}
+  else if(t.id==='noteBox'){A.C.notes=t.value;saveGame();}
+  else if(t.id==='evSearch'){
+    A.evQuery=t.value;
+    var pos=t.selectionStart;
+    renderFile();
+    var n=$('#evSearch');
+    if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(err){}}
+  }
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(A.sheet){closeSheet();return;}
+    if(A.screen==='file'){A.screen='hub';render();return;}
+  }
+  if(e.key==='Enter'&&e.target&&e.target.id==='seedIn'){
+    var b=document.querySelector('[data-a="start"]');if(b)b.click();
+  }
+});
+document.addEventListener('pointerdown',function(){
+  auInit();if(AU.ctx&&AU.on){try{AU.ctx.resume();}catch(e){}}
+},{once:true});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&A.C&&!A.C.ending)saveGame();});
+addEventListener('beforeunload',function(){if(A.C&&!A.C.ending)saveGame();});
+
+/* ═══════════ ЗАПУСК ═══════════ */
+fxInit();
+var at=$('#atmos');
+for(var i=0;i<14;i++){
+  var d=document.createElement('span');d.className='dust';
+  d.style.left=(3+Math.random()*94)+'vw';
+  d.style.top=(28+Math.random()*68)+'vh';
+  d.style.animationDuration=(12+Math.random()*17)+'s';
+  d.style.animationDelay=(-Math.random()*22)+'s';
+  if(i%3===0)d.style.background='#a678e8';
+  if(i%4===0)d.style.background='#3fb6d8';
+  at.appendChild(d);
+}
+var qs=null;try{qs=new URLSearchParams(location.search);}catch(e){}
+if(qs){
+  var c=clSeed(qs.get('case')||'');
+  var st=qs.get('set');
+  if(c){A.setSeed=c;if(st&&SETIDS.indexOf(st)>=0)A.setId=st;A.screen='setup';}
+}
+render();
+window.__ok=true;
+})();
+</script>
+</body>
+</html>
