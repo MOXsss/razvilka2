@@ -909,7 +909,7 @@ var fb=function(){try{var e=document.createElement('textarea');e.value=t;e.style
 document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);ok();}catch(x){toast('Скопируйте вручную: '+t,'info');}};
 if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();}
 /* ═══ СЕТЬ ═══ */
-var PU='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js',QU='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+var PU='https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js',QU='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
 var LB={p:'',pq:[],q:'',qq:[]};
 function need(k,u,g,cb){if(window[g])return cb(true);
 if(LB[k]==='load'){LB[k+'q'].push(cb);return;}if(LB[k]==='fail')return cb(false);
@@ -917,6 +917,8 @@ LB[k]='load';LB[k+'q']=[cb];var s=document.createElement('script');s.src=u;
 var dn=function(ok){var good=ok&&!!window[g];LB[k]=good?'ok':'fail';var q=LB[k+'q'];LB[k+'q']=[];q.forEach(function(f){try{f(good);}catch(e){}});};
 s.onload=function(){dn(true);};s.onerror=function(){dn(false);};document.head.appendChild(s);}
 var NET={peer:null,conns:{},conn:null,code:'',pl:[],hb:null,wt:null,last:0,seq:1};
+function peerOptions(){return{debug:1,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'}],sdpSemantics:'unified-plan'}};}
+function peerErrText(er){var t=er&&er.type;return t==='webrtc'?'Не удалось установить WebRTC-соединение. Проверьте, что устройства могут связываться друг с другом; попробуйте отключить изоляцию клиентов Wi-Fi или использовать другую сеть.':t==='browser-incompatible'?'Браузер не поддерживает WebRTC. Откройте игру в актуальном Chrome, Firefox или Safari.':t==='ssl-unavailable'?'Сигнальный сервер не поддерживает защищённое соединение. Откройте игру по HTTPS.':t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'?'Не удалось связаться с сигнальным сервером PeerJS. Проверьте доступ к интернету и блокировки соединений.':'Ошибка сетевого соединения'+(t?' ('+t+')':'')+'. Попробуйте подключиться ещё раз.';}
 function mkCode(){var B='ABCDEFGHJKMNPQRSTUVWXYZ',s='';for(var i=0;i<4;i++)s+=B[ri(B.length)];return s;}
 function invURL(){return location.href.split('?')[0].split('#')[0]+'?room='+NET.code;}
 function killNet(){stop('recon');stop('jw');
@@ -942,7 +944,7 @@ function hostCreate(at){at=at||0;var nm=(A.hostName||'').trim()||'Следова
 A.net='host';A.me='p0';A.sc='conn';A.connMsg='Готовим комнату…';render();
 need('p',PU,'Peer',function(ok){if(A.net!=='host')return;
 if(!ok){netErr('Не удалось загрузить библиотеку связи. Для сети нужен интернет при первом подключении. Соло и компания работают офлайн.');return;}
-killNet();var code=mkCode(),pe;try{pe=new Peer('el20-'+code);}catch(e){netErr('Не удалось создать соединение.');return;}
+killNet();var code=mkCode(),pe;try{pe=new Peer('el20-'+code,peerOptions());}catch(e){netErr('Не удалось создать соединение.');return;}
 NET.peer=pe;
 pe.on('open',function(){NET.code=code;NET.pl=[{id:'p0',name:nm}];NET.seq=1;A.sc='lobby';render();sfx('join');toast('Комната открыта. Код: '+code,'ok');
 NET.hb=setInterval(function(){Object.keys(NET.conns).forEach(function(k){var c=NET.conns[k];if(c&&c.open){try{c.send({t:'hb'});}catch(e){}}});},4000);});
@@ -951,8 +953,9 @@ pe.on('disconnected',function(){try{pe.reconnect();}catch(e){}});
 pe.on('error',function(er){var t=er&&er.type;
 if(t==='unavailable-id'){try{pe.destroy();}catch(e){}if(at<4)hostCreate(at+1);else netErr('Не удалось подобрать свободный код.');}
 else if(t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'){
-if(!NET.code)netErr('Сигнальный сервер недоступен. Для сетевой игры нужен интернет; соединение между устройствами устанавливается через WebRTC и может блокироваться некоторыми сетями.');
-else toast('Проблема с сигнальным сервером — подключённые продолжают игру.','warn');}});});}
+if(!NET.code)netErr(peerErrText(er));
+else toast('Проблема с сигнальным сервером — подключённые продолжают игру.','warn');}
+else if(t==='webrtc'||t==='browser-incompatible'||t==='ssl-unavailable')toast(peerErrText(er),'warn');});});}
 function hostData(c,m){if(!m||typeof m!=='object')return;
 if(m.t==='join'){if(A.G){try{c.send({t:'started'});}catch(e){}return;}
 if(NET.pl.length>=5){try{c.send({t:'full'});}catch(e){}return;}
@@ -984,17 +987,17 @@ need('p',PU,'Peer',function(ok){if(A.net!=='guest')return;
 if(!ok){netErr('Не удалось загрузить библиотеку связи. Соло и компания работают офлайн.');return;}
 var go=function(){var c;try{c=NET.peer.connect('el20-'+code,{reliable:true});}catch(e){netErr('Не удалось открыть соединение.');return;}
 NET.conn=c;var op=false;
-later('jw',function(){if(!op&&A.net==='guest'&&A.sc!=='lobby'&&!A.G)netErr('Хост не отвечает. Убедитесь, что комната открыта, у обоих устройств есть интернет и сеть не блокирует WebRTC.');},9000);
+later('jw',function(){if(!op&&A.net==='guest'&&A.sc!=='lobby'&&!A.G)netErr('Не удалось установить соединение за 25 секунд. Убедитесь, что хост держит комнату открытой; если вы в одной Wi-Fi сети, проверьте, не включена ли изоляция клиентов (AP/client isolation).');},25000);
 c.on('open',function(){op=true;stop('jw');try{c.send(re?{t:'rejoin',pid:re,name:nm}:{t:'join',name:nm});}catch(e){}});
 c.on('data',function(m){guestData(m);});
 c.on('close',function(){if(A.net==='guest'&&(A.G||A.sc==='lobby'))enterLost();else if(A.net==='guest')netErr('Соединение закрыто хостом.');});
 c.on('error',function(){if(A.net==='guest'&&(A.G||A.sc==='lobby'))enterLost();});};
-if(!NET.peer||NET.peer.destroyed){var pe;try{pe=new Peer();}catch(e){netErr('Не удалось создать сетевой узел.');return;}
+if(!NET.peer||NET.peer.destroyed){var pe;try{pe=new Peer(peerOptions());}catch(e){netErr('Не удалось создать сетевой узел.');return;}
 NET.peer=pe;pe.on('open',go);pe.on('disconnected',function(){try{pe.reconnect();}catch(e){}});
 pe.on('error',function(er){var t=er&&er.type;
 if(t==='peer-unavailable'&&A.sc!=='lobby'&&!A.G)netErr('Комната '+code+' не найдена. Проверьте код и что хост держит комнату открытой.');
-else if((t==='network'||t==='server-error'||t==='socket-error')&&A.sc!=='lobby'&&!A.G)netErr('Сигнальный сервер недоступен. Попробуйте соло или компанию за одним экраном.');});
-later('jw',function(){if((!NET.conn||!NET.conn.open)&&A.sc!=='lobby'&&!A.G)netErr('Не удалось связаться с сетью. Проверьте интернет, HTTPS и доступность сигнального сервера.');},12000);}
+else if((t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'||t==='webrtc'||t==='browser-incompatible'||t==='ssl-unavailable')&&A.sc!=='lobby'&&!A.G)netErr(peerErrText(er));});
+later('jw',function(){if((!NET.conn||!NET.conn.open)&&A.sc!=='lobby'&&!A.G)netErr('Не удалось связаться с сетью. Проверьте интернет, HTTPS и доступность сигнального сервера.');},25000);}
 else if(NET.peer.open)go();else NET.peer.once('open',go);
 if(!NET.wt)NET.wt=setInterval(function(){if(A.net==='guest'&&(A.G||A.sc==='lobby')&&!A.lost&&Date.now()-NET.last>12000)enterLost();},3000);});}
 function guestData(m){if(!m||typeof m!=='object')return;NET.last=Date.now();
