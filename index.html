@@ -106,8 +106,9 @@ function makeRNG(seed){
   };
 }
 
-/* ============ GRAPHICS ============ */
+/* ============ GRAPHICS (procedural SVG) ============ */
 function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; } return Math.abs(h); }
+
 const SKIN=['#f2c9a0','#e0ac80','#c68863','#8d5524','#f5d0b0','#dba378'];
 const HAIR=['#2b1a11','#4a2c1a','#7a4a23','#a86a3a','#1a1a1a','#c9c9c9','#8b3a1e','#5a4a3a'];
 const SHIRT=['#3d7eff','#2ecc71','#e74c3c','#f39c12','#9b59b6','#16a085','#34495e','#e67e22','#c0392b','#7f8c8d'];
@@ -121,11 +122,21 @@ function svgPortrait(name, themeId, size){
   const shirt=SHIRT[(h>>8)%SHIRT.length];
   const style=(h>>12)%4;
   const bg=THEME_BG[themeId]||'#1a2230';
+
   let hairSVG='';
-  if(style===0){ hairSVG=`<path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`; }
-  else if(style===1){ hairSVG=`<rect x="22" y="34" width="7" height="28" rx="3" fill="${hair}"/><rect x="51" y="34" width="7" height="28" rx="3" fill="${hair}"/><path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`; }
-  else if(style===2){ hairSVG=`<circle cx="40" cy="14" r="7" fill="${hair}"/><path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`; }
-  else { hairSVG=`<ellipse cx="40" cy="22" rx="17" ry="5" fill="${hair}"/>`; }
+  if(style===0){
+    hairSVG=`<path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`;
+  } else if(style===1){
+    hairSVG=`<rect x="22" y="34" width="7" height="28" rx="3" fill="${hair}"/>
+             <rect x="51" y="34" width="7" height="28" rx="3" fill="${hair}"/>
+             <path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`;
+  } else if(style===2){
+    hairSVG=`<circle cx="40" cy="14" r="7" fill="${hair}"/>
+             <path d="M23 34 Q23 18 40 18 Q57 18 57 34 Q57 28 40 28 Q23 28 23 34 Z" fill="${hair}"/>`;
+  } else {
+    hairSVG=`<ellipse cx="40" cy="22" rx="17" ry="5" fill="${hair}"/>`;
+  }
+
   return `<svg viewBox="0 0 80 80" width="${size}" height="${size}" style="border-radius:50%;background:${bg};display:block;flex-shrink:0">
     <circle cx="40" cy="38" r="16" fill="${skin}"/>
     ${hairSVG}
@@ -158,34 +169,150 @@ function cardIconKind(card){
 function svgIcon(kind, color){
   const c=color||'#e8ecf1';
   const P={
-    fingerprint:`<path d="M32 48 Q50 18 68 48" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><path d="M38 52 Q50 30 62 52" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><path d="M44 56 Q50 44 56 56" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>`,
-    letter:`<rect x="22" y="22" width="56" height="38" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/><path d="M22 25 L50 45 L78 25" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`,
-    magnifier:`<circle cx="44" cy="32" r="15" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="55" y1="43" x2="72" y2="60" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`,
-    pin:`<path d="M50 16 C40 16 32 24 32 34 C32 48 50 62 50 62 C50 62 68 48 68 34 C68 24 60 16 50 16 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="50" cy="34" r="6" fill="${c}"/>`,
-    book:`<path d="M28 20 L50 26 L50 60 L28 54 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><path d="M72 20 L50 26 L50 60 L72 54 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`,
-    witness:`<circle cx="36" cy="28" r="9" fill="none" stroke="${c}" stroke-width="2.5"/><path d="M22 60 Q22 44 36 44 Q50 44 50 60" fill="none" stroke="${c}" stroke-width="2.5"/><rect x="56" y="18" width="28" height="20" rx="4" fill="none" stroke="${c}" stroke-width="2"/><path d="M62 38 L66 46 L70 38" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`,
-    key:`<circle cx="34" cy="38" r="11" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="45" y1="38" x2="74" y2="38" stroke="${c}" stroke-width="2.5"/><line x1="66" y1="38" x2="66" y2="52" stroke="${c}" stroke-width="2.5"/><line x1="74" y1="38" x2="74" y2="48" stroke="${c}" stroke-width="2.5"/>`,
-    eyeoff:`<path d="M20 38 Q50 16 80 38 Q50 60 20 38 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="50" cy="38" r="7" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="22" y1="58" x2="78" y2="18" stroke="#e07a6a" stroke-width="3" stroke-linecap="round"/>`,
-    phone:`<rect x="36" y="16" width="28" height="48" rx="5" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="44" y1="58" x2="56" y2="58" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>`,
-    money:`<rect x="20" y="24" width="60" height="34" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/><circle cx="50" cy="41" r="8" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="26" y1="30" x2="26" y2="52" stroke="${c}" stroke-width="2"/><line x1="74" y1="30" x2="74" y2="52" stroke="${c}" stroke-width="2"/>`,
-    fire:`<path d="M50 14 C42 26 38 32 42 44 C44 50 48 54 50 56 C50 56 52 52 54 48 C58 54 56 40 56 40 C62 34 56 26 50 14 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><path d="M46 54 Q42 48 46 42" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/>`,
-    safe:`<rect x="24" y="18" width="52" height="46" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/><circle cx="50" cy="41" r="11" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="50" y1="34" x2="50" y2="41" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="30" r="1.5" fill="${c}"/><circle cx="32" cy="52" r="1.5" fill="${c}"/>`,
-    cup:`<path d="M28 26 L28 52 Q28 60 36 60 L58 60 Q66 60 66 52 L66 26 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/><path d="M66 34 L76 34 Q80 34 80 42 Q80 50 76 50 L66 50" fill="none" stroke="${c}" stroke-width="2.5"/>`,
-    exit:`<rect x="28" y="18" width="28" height="46" fill="none" stroke="${c}" stroke-width="2.5"/><line x1="58" y1="41" x2="78" y2="41" stroke="${c}" stroke-width="2.5"/><path d="M70 33 L78 41 L70 49" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`
+    fingerprint:`<path d="M32 48 Q50 18 68 48" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M38 52 Q50 30 62 52" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M44 56 Q50 44 56 56" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>`,
+    letter:`<rect x="22" y="22" width="56" height="38" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <path d="M22 25 L50 45 L78 25" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`,
+    magnifier:`<circle cx="44" cy="32" r="15" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="55" y1="43" x2="72" y2="60" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`,
+    pin:`<path d="M50 16 C40 16 32 24 32 34 C32 48 50 62 50 62 C50 62 68 48 68 34 C68 24 60 16 50 16 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="50" cy="34" r="6" fill="${c}"/>`,
+    book:`<path d="M28 20 L50 26 L50 60 L28 54 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M72 20 L50 26 L50 60 L72 54 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`,
+    witness:`<circle cx="36" cy="28" r="9" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <path d="M22 60 Q22 44 36 44 Q50 44 50 60" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <rect x="56" y="18" width="28" height="20" rx="4" fill="none" stroke="${c}" stroke-width="2"/>
+      <path d="M62 38 L66 46 L70 38" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`,
+    key:`<circle cx="34" cy="38" r="11" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="45" y1="38" x2="74" y2="38" stroke="${c}" stroke-width="2.5"/>
+      <line x1="66" y1="38" x2="66" y2="52" stroke="${c}" stroke-width="2.5"/>
+      <line x1="74" y1="38" x2="74" y2="48" stroke="${c}" stroke-width="2.5"/>`,
+    eyeoff:`<path d="M20 38 Q50 16 80 38 Q50 60 20 38 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="50" cy="38" r="7" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="22" y1="58" x2="78" y2="18" stroke="#e07a6a" stroke-width="3" stroke-linecap="round"/>`,
+    phone:`<rect x="36" y="16" width="28" height="48" rx="5" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="44" y1="58" x2="56" y2="58" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>`,
+    money:`<rect x="20" y="24" width="60" height="34" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <circle cx="50" cy="41" r="8" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="26" y1="30" x2="26" y2="52" stroke="${c}" stroke-width="2"/>
+      <line x1="74" y1="30" x2="74" y2="52" stroke="${c}" stroke-width="2"/>`,
+    fire:`<path d="M50 14 C42 26 38 32 42 44 C44 50 48 54 50 56 C50 56 52 52 54 48 C58 54 56 40 56 40 C62 34 56 26 50 14 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M46 54 Q42 48 46 42" fill="none" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/>`,
+    safe:`<rect x="24" y="18" width="52" height="46" rx="4" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <circle cx="50" cy="41" r="11" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="50" y1="34" x2="50" y2="41" stroke="${c}" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="32" cy="30" r="1.5" fill="${c}"/>
+      <circle cx="32" cy="52" r="1.5" fill="${c}"/>`,
+    cup:`<path d="M28 26 L28 52 Q28 60 36 60 L58 60 Q66 60 66 52 L66 26 Z" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M66 34 L76 34 Q80 34 80 42 Q80 50 76 50 L66 50" fill="none" stroke="${c}" stroke-width="2.5"/>`,
+    exit:`<rect x="28" y="18" width="28" height="46" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <line x1="58" y1="41" x2="78" y2="41" stroke="${c}" stroke-width="2.5"/>
+      <path d="M70 33 L78 41 L70 49" fill="none" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/>`
   };
   return `<svg viewBox="0 0 100 70" width="56" height="56" style="display:block">${P[kind]||P.magnifier}</svg>`;
 }
 
-function svgCardIllustration(card){ return svgIcon(cardIconKind(card), SC[card.scale]); }
+function svgCardIllustration(card){
+  return svgIcon(cardIconKind(card), SC[card.scale]);
+}
 
 function svgThemeScene(themeId){
   const scenes={
-    hotel:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#0a0e1a"/><circle cx="165" cy="22" r="9" fill="#f5e2a0"/><circle cx="161" cy="20" r="9" fill="#0a0e1a"/><g fill="#fff" opacity="0.7"><circle cx="30" cy="15" r="0.8"/><circle cx="60" cy="25" r="0.6"/><circle cx="120" cy="12" r="0.7"/><circle cx="140" cy="30" r="0.5"/></g><rect x="55" y="35" width="90" height="65" fill="#1a2740"/><path d="M50 35 L100 20 L150 35 Z" fill="#2a3446"/><g fill="#f5e2a0" opacity="0.85"><rect x="65" y="45" width="10" height="10"/><rect x="80" y="45" width="10" height="10"/><rect x="110" y="45" width="10" height="10"/><rect x="125" y="45" width="10" height="10"/><rect x="65" y="60" width="10" height="10"/><rect x="80" y="60" width="10" height="10"/><rect x="110" y="60" width="10" height="10"/><rect x="125" y="60" width="10" height="10"/></g><rect x="92" y="78" width="16" height="22" fill="#e0b14a"/></svg>`,
-    space:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#050814"/><g fill="#fff"><circle cx="30" cy="20" r="0.8"/><circle cx="80" cy="15" r="0.6"/><circle cx="140" cy="25" r="0.9"/><circle cx="180" cy="15" r="0.7"/><circle cx="60" cy="45" r="0.5"/><circle cx="110" cy="55" r="0.7"/><circle cx="170" cy="65" r="0.6"/><circle cx="20" cy="70" r="0.7"/><circle cx="50" cy="85" r="0.6"/></g><circle cx="165" cy="70" r="25" fill="#3a4a7a" opacity="0.35"/><ellipse cx="80" cy="78" rx="38" ry="20" fill="#1a2230"/><ellipse cx="80" cy="78" rx="38" ry="20" fill="none" stroke="#3d7eff" stroke-width="1.2"/><circle cx="80" cy="73" r="4" fill="#6aa8e0"/></svg>`,
-    theatre:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#1a0a12"/><path d="M0 0 Q40 25 30 100 L0 100 Z" fill="#8b1a1a"/><path d="M200 0 Q160 25 170 100 L200 100 Z" fill="#8b1a1a"/><ellipse cx="100" cy="65" rx="70" ry="30" fill="#f5e2a0" opacity="0.06"/><ellipse cx="100" cy="58" rx="22" ry="28" fill="#f5e2a0"/><circle cx="92" cy="50" r="2.2" fill="#1a0a12"/><circle cx="108" cy="50" r="2.2" fill="#1a0a12"/><path d="M92 66 Q100 72 108 66" fill="none" stroke="#1a0a12" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-    university:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#0a1a0a"/><circle cx="170" cy="20" r="8" fill="#e8e0c0" opacity="0.5"/><rect x="50" y="40" width="100" height="60" fill="#2a3a2a"/><path d="M40 40 L100 15 L160 40 Z" fill="#3a4a3a"/><g fill="#e0b14a" opacity="0.55"><rect x="60" y="55" width="6" height="10"/><rect x="76" y="55" width="6" height="10"/><rect x="92" y="55" width="6" height="10"/><rect x="108" y="55" width="6" height="10"/><rect x="124" y="55" width="6" height="10"/><rect x="140" y="55" width="6" height="10"/></g></svg>`,
-    village:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#0a0a1a"/><circle cx="40" cy="25" r="10" fill="#f5e2a0"/><circle cx="36" cy="23" r="10" fill="#0a0a1a"/><rect x="70" y="55" width="50" height="40" fill="#3a2a1a"/><path d="M58 55 L95 28 L132 55 Z" fill="#5a3a2a"/><rect x="88" y="72" width="14" height="23" fill="#0e0a04"/><rect x="74" y="62" width="10" height="8" fill="#f5e2a0" opacity="0.85"/><rect x="106" y="62" width="10" height="8" fill="#f5e2a0" opacity="0.85"/><rect x="150" y="60" width="6" height="35" fill="#2a1a0a"/><circle cx="153" cy="55" r="16" fill="#1a3a1a"/></svg>`,
-    corp:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="200" height="100" fill="#0a0a1a"/><circle cx="100" cy="75" r="45" fill="#c06030" opacity="0.28"/><g fill="#1a2230" stroke="#3d7eff" stroke-width="0.5"><rect x="20" y="30" width="30" height="70"/><rect x="55" y="40" width="25" height="60"/><rect x="85" y="18" width="40" height="82"/><rect x="130" y="45" width="30" height="55"/><rect x="165" y="55" width="25" height="45"/></g><g fill="#6aa8e0" opacity="0.75"><rect x="26" y="38" width="4" height="4"/><rect x="34" y="38" width="4" height="4"/><rect x="26" y="48" width="4" height="4"/><rect x="34" y="48" width="4" height="4"/><rect x="91" y="26" width="6" height="5"/><rect x="103" y="26" width="6" height="5"/><rect x="115" y="26" width="6" height="5"/><rect x="91" y="38" width="6" height="5"/><rect x="115" y="38" width="6" height="5"/><rect x="91" y="50" width="6" height="5"/><rect x="103" y="50" width="6" height="5"/><rect x="115" y="50" width="6" height="5"/></g></svg>`
+    hotel:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#0a0e1a"/>
+      <circle cx="165" cy="22" r="9" fill="#f5e2a0"/>
+      <circle cx="161" cy="20" r="9" fill="#0a0e1a"/>
+      <g fill="#fff" opacity="0.7"><circle cx="30" cy="15" r="0.8"/><circle cx="60" cy="25" r="0.6"/><circle cx="120" cy="12" r="0.7"/><circle cx="140" cy="30" r="0.5"/></g>
+      <rect x="55" y="35" width="90" height="65" fill="#1a2740"/>
+      <path d="M50 35 L100 20 L150 35 Z" fill="#2a3446"/>
+      <g fill="#f5e2a0" opacity="0.85">
+        <rect x="65" y="45" width="10" height="10"/><rect x="80" y="45" width="10" height="10"/>
+        <rect x="110" y="45" width="10" height="10"/><rect x="125" y="45" width="10" height="10"/>
+        <rect x="65" y="60" width="10" height="10"/><rect x="80" y="60" width="10" height="10"/>
+        <rect x="110" y="60" width="10" height="10"/><rect x="125" y="60" width="10" height="10"/>
+      </g>
+      <rect x="92" y="78" width="16" height="22" fill="#e0b14a"/>
+    </svg>`,
+    space:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#050814"/>
+      <g fill="#fff">
+        <circle cx="30" cy="20" r="0.8"/><circle cx="80" cy="15" r="0.6"/><circle cx="140" cy="25" r="0.9"/>
+        <circle cx="180" cy="15" r="0.7"/><circle cx="60" cy="45" r="0.5"/><circle cx="110" cy="55" r="0.7"/>
+        <circle cx="170" cy="65" r="0.6"/><circle cx="20" cy="70" r="0.7"/><circle cx="50" cy="85" r="0.6"/>
+      </g>
+      <circle cx="165" cy="70" r="25" fill="#3a4a7a" opacity="0.35"/>
+      <circle cx="165" cy="70" r="20" fill="none" stroke="#5a6aa0" stroke-width="0.7"/>
+      <ellipse cx="80" cy="78" rx="38" ry="20" fill="#1a2230"/>
+      <ellipse cx="80" cy="78" rx="38" ry="20" fill="none" stroke="#3d7eff" stroke-width="1.2"/>
+      <circle cx="80" cy="73" r="4" fill="#6aa8e0"/>
+      <line x1="80" y1="78" x2="55" y2="93" stroke="#3d7eff" stroke-width="1"/>
+      <line x1="80" y1="78" x2="105" y2="93" stroke="#3d7eff" stroke-width="1"/>
+    </svg>`,
+    theatre:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#1a0a12"/>
+      <path d="M0 0 Q40 25 30 100 L0 100 Z" fill="#8b1a1a"/>
+      <path d="M200 0 Q160 25 170 100 L200 100 Z" fill="#8b1a1a"/>
+      <path d="M30 0 Q50 20 40 100 L30 100 Z" fill="#6b1010" opacity="0.6"/>
+      <path d="M170 0 Q150 20 160 100 L170 100 Z" fill="#6b1010" opacity="0.6"/>
+      <ellipse cx="100" cy="65" rx="70" ry="30" fill="#f5e2a0" opacity="0.06"/>
+      <ellipse cx="100" cy="58" rx="22" ry="28" fill="#f5e2a0"/>
+      <circle cx="92" cy="50" r="2.2" fill="#1a0a12"/>
+      <circle cx="108" cy="50" r="2.2" fill="#1a0a12"/>
+      <path d="M92 66 Q100 72 108 66" fill="none" stroke="#1a0a12" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>`,
+    university:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#0a1a0a"/>
+      <circle cx="170" cy="20" r="8" fill="#e8e0c0" opacity="0.5"/>
+      <rect x="50" y="40" width="100" height="60" fill="#2a3a2a"/>
+      <path d="M40 40 L100 15 L160 40 Z" fill="#3a4a3a"/>
+      <g fill="#e0b14a" opacity="0.55">
+        <rect x="60" y="55" width="6" height="10"/><rect x="76" y="55" width="6" height="10"/>
+        <rect x="92" y="55" width="6" height="10"/><rect x="108" y="55" width="6" height="10"/>
+        <rect x="124" y="55" width="6" height="10"/><rect x="140" y="55" width="6" height="10"/>
+      </g>
+      <g fill="#8b9a8b">
+        <rect x="58" y="45" width="6" height="55"/>
+        <rect x="74" y="45" width="6" height="55"/>
+        <rect x="120" y="45" width="6" height="55"/>
+        <rect x="136" y="45" width="6" height="55"/>
+      </g>
+      <rect x="88" y="70" width="24" height="30" fill="#1a1a0a"/>
+    </svg>`,
+    village:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#0a0a1a"/>
+      <circle cx="40" cy="25" r="10" fill="#f5e2a0"/>
+      <circle cx="36" cy="23" r="10" fill="#0a0a1a"/>
+      <rect x="70" y="55" width="50" height="40" fill="#3a2a1a"/>
+      <path d="M58 55 L95 28 L132 55 Z" fill="#5a3a2a"/>
+      <rect x="88" y="72" width="14" height="23" fill="#0e0a04"/>
+      <rect x="74" y="62" width="10" height="8" fill="#f5e2a0" opacity="0.85"/>
+      <rect x="106" y="62" width="10" height="8" fill="#f5e2a0" opacity="0.85"/>
+      <rect x="150" y="60" width="6" height="35" fill="#2a1a0a"/>
+      <circle cx="153" cy="55" r="16" fill="#1a3a1a"/>
+      <circle cx="149" cy="58" r="10" fill="#2a4a2a"/>
+    </svg>`,
+    corp:`<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <rect width="200" height="100" fill="#0a0a1a"/>
+      <circle cx="100" cy="75" r="45" fill="#c06030" opacity="0.28"/>
+      <g fill="#1a2230" stroke="#3d7eff" stroke-width="0.5">
+        <rect x="20" y="30" width="30" height="70"/>
+        <rect x="55" y="40" width="25" height="60"/>
+        <rect x="85" y="18" width="40" height="82"/>
+        <rect x="130" y="45" width="30" height="55"/>
+        <rect x="165" y="55" width="25" height="45"/>
+      </g>
+      <g fill="#6aa8e0" opacity="0.75">
+        <rect x="26" y="38" width="4" height="4"/><rect x="34" y="38" width="4" height="4"/>
+        <rect x="26" y="48" width="4" height="4"/><rect x="34" y="48" width="4" height="4"/>
+        <rect x="91" y="26" width="6" height="5"/><rect x="103" y="26" width="6" height="5"/><rect x="115" y="26" width="6" height="5"/>
+        <rect x="91" y="38" width="6" height="5"/><rect x="115" y="38" width="6" height="5"/>
+        <rect x="91" y="50" width="6" height="5"/><rect x="103" y="50" width="6" height="5"/><rect x="115" y="50" width="6" height="5"/>
+        <rect x="136" y="52" width="4" height="4"/><rect x="146" y="52" width="4" height="4"/>
+        <rect x="136" y="62" width="4" height="4"/>
+        <rect x="172" y="62" width="4" height="4"/><rect x="180" y="62" width="4" height="4"/>
+      </g>
+    </svg>`
   };
   return scenes[themeId]||scenes.hotel;
 }
@@ -493,7 +620,7 @@ function checkFinal(){
   G.score=sc; G.checked=true; G.phase='score';
 }
 
-/* ============ NETWORK (только локальная сеть, без TURN) ============ */
+/* ============ NETWORK ============ */
 function createRoomFixed(){
   if(!UI.myName.trim()) return toast('Введите имя');
   saveName();
@@ -969,7 +1096,7 @@ function renderRules(){
     <div class="inner">
       <h2>Правила</h2>
       <div class="sub" style="line-height:1.7">
-        <b>Режимы.</b> «Онлайн-комната» — каждый со своего телефона (работает в одной сети Wi-Fi). «Один телефон» — все на одном устройстве.<br><br>
+        <b>Режимы.</b> «Онлайн-комната» — каждый со своего телефона. «Один телефон» — все на одном устройстве.<br><br>
         <b>QR.</b> Хост создаёт комнату и показывает QR. Друзья сканируют его камерой.<br><br>
         <b>Цель.</b> Командой раскрыть дело: кто, зачем, как и где.<br><br>
         <b>Ход.</b> В свой ход выбери одну карту из руки:<br>
